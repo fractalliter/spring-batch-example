@@ -11,6 +11,7 @@ public class KafkaConfiguration {
 
     @Value("${spring.kafka.template.default-topic}")
     private String weeklyWinnerTopic;
+
     @Bean
     public NewTopic topic() {
         return TopicBuilder.name(weeklyWinnerTopic)

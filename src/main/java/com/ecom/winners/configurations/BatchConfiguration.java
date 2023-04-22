@@ -1,8 +1,6 @@
 package com.ecom.winners.configurations;
 
 import com.ecom.winners.notifiers.JobCompletionNotificationListener;
-import jakarta.persistence.EntityManagerFactory;
-import jakarta.transaction.TransactionManager;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
