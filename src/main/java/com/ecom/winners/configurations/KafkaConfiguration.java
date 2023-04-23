@@ -11,12 +11,16 @@ public class KafkaConfiguration {
 
     @Value("${spring.kafka.template.default-topic}")
     private String weeklyWinnerTopic;
+    @Value("${spring.kafka.winner.topic.partitions}")
+    private int partitions;
+    @Value("${spring.kafka.winner.topic.replications}")
+    private int replications;
 
     @Bean
     public NewTopic topic() {
         return TopicBuilder.name(weeklyWinnerTopic)
-                .partitions(10)
-                .replicas(1)
+                .partitions(partitions)
+                .replicas(replications)
                 .build();
     }
 }
