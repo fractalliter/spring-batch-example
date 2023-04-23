@@ -31,15 +31,17 @@ public class SelectWinner {
 
     @Bean(name = "queryLuckyWinner")
     public JdbcCursorItemReader<User> reader() {
-        String groupByStatement = "SELECT user_id, sum(amount) as total_purchase FROM transactions " +
-                "group by user_id having sum(amount) > 100";
-        String totalEligibleUsers = "SELECT count(*) FROM (" + groupByStatement + ") as p";
-        String luckyWinner = "SELECT user_id FROM (" + groupByStatement + ") as t " +
-                "ORDER BY floor(random()*(" + totalEligibleUsers + ")) LIMIT 1";
+        String totalTransactions = "SELECT t.user_id, sum(t.amount) as total_purchase FROM transactions as t " +
+                "WHERE (date_part('week',t.created_at) >= date_part('week', CURRENT_TIMESTAMP - interval '1 week') and " +
+                "date_part('week',t.created_at) <= date_part('week', CURRENT_TIMESTAMP)) " +
+                "group by t.user_id having sum(t.amount) > 100";
+        String allEligibleUsersForLastWeek = "SELECT count(*) FROM (" + totalTransactions + ") as p";
+        String luckyWinner = "SELECT ts.user_id FROM (" + totalTransactions + ") as ts " +
+                "ORDER BY floor(random()*(" + allEligibleUsersForLastWeek + ")) LIMIT 1";
         return new JdbcCursorItemReaderBuilder<User>()
                 .name("queryLuckyWinner")
                 .rowMapper((rs, row) -> {
-                    Optional<User> user = userRepository.findById(rs.getLong(1));
+                    Optional<User> user = userRepository.findByUserId(rs.getLong(1));
                     return user.orElse(null);
                 })
                 .dataSource(dataSource)
