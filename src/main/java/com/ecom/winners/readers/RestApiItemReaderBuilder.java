@@ -18,8 +18,8 @@ public class RestApiItemReaderBuilder<T> implements ItemReader<List<T>> {
     private WebClient webClient;
     private Class<T> entity;
     private String name;
-    private int page = 1;
-    private int size = 10;
+    private int page;
+    private int size;
     private ObjectMapper mapper;
     private Predicate<Integer> endRead;
 

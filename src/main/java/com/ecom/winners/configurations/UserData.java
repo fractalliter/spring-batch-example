@@ -34,13 +34,21 @@ public class UserData {
     @Value("${userdata.reader.resource.url}")
     private String url;
 
+    @Value("${userdata.reader.page.size}")
+    private int pageSize;
+    @Value("${userdata.reader.start.page}")
+    private int startPage;
+    @Value("${userdata.reader.end.page}")
+    private int endPage;
+
     @Bean(name = "userReader")
     public ItemReader<List<UserDTO>> reader() {
         return RestApiItemReaderBuilder.<UserDTO>builder()
                 .name("fetchUserData")
                 .url(url).webClient(WebClient.create())
-                .page(0)
-                .size(10)
+                .page(startPage)
+                .size(pageSize)
+                .endRead(currentPage -> currentPage >= endPage)
                 .headers(new HashMap<>())
                 .entity(UserDTO.class)
                 .mapper(objectMapper)
