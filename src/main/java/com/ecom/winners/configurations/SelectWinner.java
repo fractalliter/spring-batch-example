@@ -37,7 +37,7 @@ public class SelectWinner {
                 "group by t.user_id having sum(t.amount) > 100";
         String allEligibleUsersForLastWeek = "SELECT count(*) FROM (" + totalTransactions + ") as p";
         String luckyWinner = "SELECT ts.user_id FROM (" + totalTransactions + ") as ts " +
-                "ORDER BY floor(random()*(" + allEligibleUsersForLastWeek + ")) LIMIT 1";
+                "ORDER BY random() OFFSET floor(random()*(" + allEligibleUsersForLastWeek + ")) LIMIT 1";
         return new JdbcCursorItemReaderBuilder<User>()
                 .name("queryLuckyWinner")
                 .rowMapper((rs, row) -> {
