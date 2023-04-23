@@ -43,6 +43,7 @@ public class UserProcessor implements ItemProcessor<List<UserDTO>, List<User>> {
 
         user.setUserId(userDto.getId());
         user.setName(userDto.getName());
+        user.setUsername(userDto.getUsername());
         user.setPhone(userDto.getPhone());
         user.setWebsite(userDto.getWebsite());
         user.setAddress(address);

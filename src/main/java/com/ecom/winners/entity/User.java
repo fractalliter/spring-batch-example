@@ -31,7 +31,7 @@ public class User {
     @OneToMany(
             cascade = CascadeType.ALL,
             fetch = FetchType.EAGER,
-            mappedBy = "user_id"
+            mappedBy = "userId"
     )
     private Set<Transaction> transactions;
 

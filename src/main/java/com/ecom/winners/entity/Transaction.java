@@ -1,37 +1,39 @@
 package com.ecom.winners.entity;
 
 import jakarta.persistence.*;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 
 @Entity
 @Table(name = "transactions")
+@EntityListeners(AuditingEntityListener.class)
 public class Transaction {
-    Long user_id;
-    BigDecimal amount;
+    @ManyToOne
+    @JoinColumn(name = "userId", nullable = false)
+    private User userId;
+    private BigDecimal amount;
+    @CreatedDate
+    private Instant createdAt;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    Long id;
-
-    public Transaction(Long user_id, BigDecimal amount) {
-        this.user_id = user_id;
-        this.amount = amount;
-    }
+    private Long id;
 
     public Transaction() {
-
     }
 
-    public void setUser_id(Long user_id) {
-        this.user_id = user_id;
+    public void setUserId(User userId) {
+        this.userId = userId;
     }
 
     public void setAmount(BigDecimal amount) {
         this.amount = amount;
     }
 
-    public Long getUser_id() {
-        return user_id;
+    public User getUserId() {
+        return userId;
     }
 
     public BigDecimal getAmount() {
@@ -40,5 +42,9 @@ public class Transaction {
 
     public Long getId() {
         return id;
+    }
+
+    public Instant getCreatedAt() {
+        return createdAt;
     }
 }
