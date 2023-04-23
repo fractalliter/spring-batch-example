@@ -17,7 +17,7 @@ env:
   APPLICATION_NAME: Winners
   DATABASE: ${{ vars.DB_DATABASE }}
   DB_USERNAME: ${{ secrets.DB_USERNAME }}
-  DB_PASSWORD: ${{secrets.DB_PASSWORD }}
+  DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
   DB_HOST: localhost
   KAFKA_BOOTSTRAP_SERVERS: "localhost:9092"
   KAFKA_CLIENT_ID: 12345
@@ -47,8 +47,8 @@ jobs:
           - 5432:5432
         env:
           POSTGRES_DB: ${{ env.DATABASE }}
-          POSTGRES_USERNAME: ${{ env.DB_USERNAME }}
-          POSTGRES_PASSWORD: ${{ env.DB_PASSWORD }}
+          POSTGRES_USERNAME: ${{ secrets.DB_USERNAME }}
+          POSTGRES_PASSWORD: ${{ secrets.DB_PASSWORD }}
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
