@@ -40,7 +40,7 @@ public class BatchConfiguration {
                 .build();
     }
 
-    @Scheduled(cron = "*/5 * * * * *")
+    @Scheduled(cron = "59 23 * * SUN")
     public void perform() throws Exception {
 
         logger.info("Job Started at :" + new Date());
