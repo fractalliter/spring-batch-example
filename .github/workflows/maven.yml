@@ -1,0 +1,70 @@
+# This workflow will build a Java project with Maven, and cache/restore any dependencies to improve the workflow execution time
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-maven
+
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+
+name: Java CI with Maven
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+env:
+  APPLICATION_NAME: Winners
+  DATABASE: ${{ vars.DB_DATABASE }}
+  DB_USERNAME: ${{ secrets.DB_USERNAME }}
+  DB_PASSWORD: ${{secrets.DB_PASSWORD }}
+  DB_HOST: localhost
+  KAFKA_BOOTSTRAP_SERVERS: "localhost:9092"
+  KAFKA_CLIENT_ID: 12345
+  KAFKA_WINNER_TOPIC: lucky_winner
+  KAFKA_WINNER_TOPIC_PARTITIONS: 1
+  KAFKA_WINNER_TOPIC_REPLICATIONS: 1
+  API_READER_CHUNK_SIZE: 1
+  API_READER_START_PAGE: 0
+  API_READER_END_PAGE: 1
+  API_READER_PAGE_SIZE: 10
+  TRANSACTIONS_READER_CHUNK_SIZE: 10
+  TRANSACTIONS_READER_RESOURCE_PATH: data/transactions.csv
+  TRANSACTION_READER_CSV_HEADERS: user_id,amount
+  API_READER_URL: ${{ vars.USER_DATA_URL }}
+  DB_PORT: ${{ vars.DB_PORT }}
+  PROFILE: ${{ vars.PROFILE }}
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    
+    services:
+      postgres:
+        image: postgres
+        ports:
+          - ${{ env.DB_PORT }}:${{ env.DB_PORT }}
+        env:
+          POSTGRES_DB: ${{ env.DATABASE }}
+          POSTGRES_USERNAME: ${{ env.DB_USERNAME }}
+          POSTGRES_PASSWORD: ${{ env.DB_PASSWORD }}
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up JDK 17
+      uses: actions/setup-java@v3
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        cache: maven
+    - name: Start Bitname Kafka
+      uses: bbcCorp/kafka-actions@v1
+    - name: Build with Maven
+      env:
+        PROFILE: test
+      run: mvn -B package --file pom.xml
