@@ -53,7 +53,10 @@ public class JpaBulkItemWriter<T> implements ItemWriter<List<T>>, InitializingBe
 
             for (List<T> item : listOfItems) {
                 for (T i : item)
-                    entityManager.persist(i);
+                    if (entityManager.contains(i))
+                        entityManager.merge(i);
+                    else
+                        entityManager.persist(i);
 
                 ++addedToContextCount;
             }
