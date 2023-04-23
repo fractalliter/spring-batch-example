@@ -13,7 +13,7 @@ import java.util.Optional;
 
 public class TransactionProcessor implements ItemProcessor<TransactionDTO, Transaction> {
     private static final Logger logger = LoggerFactory.getLogger(TransactionProcessor.class);
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
     public TransactionProcessor(UserRepository userRepository) {
         this.userRepository = userRepository;

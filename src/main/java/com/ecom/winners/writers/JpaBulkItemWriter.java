@@ -29,7 +29,7 @@ public class JpaBulkItemWriter<T> implements ItemWriter<List<T>>, InitializingBe
         this.usePersist = usePersist;
     }
 
-    public void afterPropertiesSet() throws Exception {
+    public void afterPropertiesSet() {
         Assert.state(this.entityManagerFactory != null, "An EntityManagerFactory is required");
     }
 

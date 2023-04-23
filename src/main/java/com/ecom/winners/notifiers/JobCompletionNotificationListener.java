@@ -1,6 +1,5 @@
 package com.ecom.winners.notifiers;
 
-import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.BatchStatus;
