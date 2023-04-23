@@ -9,6 +9,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 
 @Builder
 public class RestApiItemReaderBuilder<T> implements ItemReader<List<T>> {
@@ -20,10 +21,11 @@ public class RestApiItemReaderBuilder<T> implements ItemReader<List<T>> {
     private int page = 1;
     private int size = 10;
     private ObjectMapper mapper;
+    private Predicate<Integer> endRead;
 
     @Override
     public List<T> read() {
-        if (page > 0) {
+        if (endRead.test(page)) {
             return null;
         }
         Object[] response = webClient.get()
