@@ -44,7 +44,7 @@ jobs:
       postgres:
         image: postgres
         ports:
-          - ${{ env.DB_PORT }}:${{ env.DB_PORT }}
+          - 5432:5432
         env:
           POSTGRES_DB: ${{ env.DATABASE }}
           POSTGRES_USERNAME: ${{ env.DB_USERNAME }}
