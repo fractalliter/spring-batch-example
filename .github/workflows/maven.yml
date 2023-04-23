@@ -46,9 +46,9 @@ jobs:
         ports:
           - 5432:5432
         env:
-          POSTGRES_DB: ${{ env.DATABASE }}
-          POSTGRES_USERNAME: ${{ secrets.DB_USERNAME }}
-          POSTGRES_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          POSTGRES_DB: transactions
+          POSTGRES_USERNAME: postgres
+          POSTGRES_PASSWORD: postgres
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
