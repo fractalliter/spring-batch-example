@@ -1,5 +1,5 @@
 # Winner selection batch pipeline
-In this project you can find a demonstration of a [batch processing](https://en.wikipedia.org/wiki/Batch_processing) job with [Spring Batch Framework](https://docs.spring.io/spring-batch/docs/current/reference/html/spring-batch-intro.html) which integrates with [Apache Kafka](https://kafka.apache.org/) and [PostgreSQL](https://www.postgresql.org/).
+In this project you can find a demonstration of a [batch processing](https://en.wikipedia.org/wiki/Batch_processing) pipeline with [Spring Batch Framework](https://docs.spring.io/spring-batch/docs/current/reference/html/spring-batch-intro.html) which integrates with [Apache Kafka](https://kafka.apache.org/) and [PostgreSQL](https://www.postgresql.org/).
 
 ## How to run
 You need to have [docker](https://www.docker.com/) with [docker compose](https://docs.docker.com/compose/) installed on your machine. You can run the following command on the root of the project from command line:
