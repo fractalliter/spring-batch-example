@@ -12,7 +12,7 @@ import org.springframework.batch.item.ItemProcessor;
 
 public class WinnerProcessor implements ItemProcessor<User, UserDTO> {
     @Override
-    public UserDTO process(User user) throws Exception {
+    public UserDTO process(User user) {
         Company company = user.getCompany();
         Address address = user.getAddress();
         if (company == null || address == null) throw new RuntimeException("Address/Company is null");

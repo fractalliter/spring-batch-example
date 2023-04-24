@@ -13,7 +13,6 @@ import org.springframework.batch.item.database.builder.JpaItemWriterBuilder;
 import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.batch.item.file.builder.FlatFileItemReaderBuilder;
 import org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,23 +22,14 @@ import org.springframework.transaction.PlatformTransactionManager;
 @Configuration
 public class UserTransaction {
 
-    @Autowired
-    UserRepository userRepository;
-
-    @Value("${transaction.reader.chunk.size}")
-    private Integer chunkSize;
-
-    @Value("${transaction.reader.resource.path}")
-    private String resourcePath;
-
-    @Value("${transaction.reader.resource.headers}")
-    private String names;
-
     @Bean(name = "transactionReader")
-    public FlatFileItemReader<TransactionDTO> reader() {
+    public FlatFileItemReader<TransactionDTO> reader(
+            @Value("${transaction.reader.resource.path}") String resourcePath,
+            @Value("${transaction.reader.resource.headers}") String names
+    ) {
         String[] headers = names.replaceAll("\\s", "").split(",");
         return new FlatFileItemReaderBuilder<TransactionDTO>()
-                .name("transactionItemReader")
+                .name("transactionReader")
                 .resource(new ClassPathResource(resourcePath))
                 .delimited()
                 .names(headers)
@@ -61,17 +51,20 @@ public class UserTransaction {
                 .build();
     }
 
-    @Bean
+    @Bean(name = "insertUserTransactions")
     public Step insertUserTransactions(
             JobRepository jobRepository,
+            TransactionProcessor transactionProcessor,
             PlatformTransactionManager transactionManager,
-            JpaItemWriter<Transaction> writer
+            JpaItemWriter<Transaction> transactionWriter,
+            FlatFileItemReader<TransactionDTO> transactionReader,
+            @Value("${transaction.reader.chunk.size}") int chunkSize
     ) {
         return new StepBuilder("insertUserTransactions", jobRepository)
                 .<TransactionDTO, Transaction>chunk(chunkSize, transactionManager)
-                .reader(reader())
-                .processor(processor(userRepository))
-                .writer(writer)
+                .reader(transactionReader)
+                .processor(transactionProcessor)
+                .writer(transactionWriter)
                 .build();
     }
 

@@ -18,7 +18,7 @@ import java.util.function.Function;
 
 public class UserProcessor implements ItemProcessor<List<UserDTO>, List<User>> {
     private static final Logger logger = LoggerFactory.getLogger(TransactionProcessor.class);
-    private static final Function<UserDTO, User> mapDtoToEntity = userDto -> {
+    private final Function<UserDTO, User> mapDtoToEntity = userDto -> {
         User user = new User();
         Address address = new Address();
         GeoLocation geoLocation = new GeoLocation();

@@ -20,6 +20,7 @@ import java.util.Date;
 @AllArgsConstructor
 public class BatchConfiguration {
     private static final Logger logger = LoggerFactory.getLogger(BatchConfiguration.class);
+
     ApplicationContext applicationContext;
     JobLauncher jobLauncher;
 
@@ -41,18 +42,15 @@ public class BatchConfiguration {
     }
 
     @Scheduled(cron = "59 23 * * * SUN")
-    public void perform() throws Exception {
-
+    public void runSelectingWeeklyWinnerJob() throws Exception {
         logger.info("Job Started at :" + new Date());
 
+        Job job = (Job) applicationContext.getBean("selectingWeeklyWinner");
         JobParameters param = new JobParametersBuilder()
                 .addString("JobID", String.valueOf(System.currentTimeMillis()))
                 .toJobParameters();
 
-        JobExecution execution = jobLauncher.run(
-                (Job) applicationContext.getBean("selectingWeeklyWinner"),
-                param
-        );
+        JobExecution execution = jobLauncher.run(job, param);
 
         logger.info("Job finished with status :" + execution.getStatus());
     }

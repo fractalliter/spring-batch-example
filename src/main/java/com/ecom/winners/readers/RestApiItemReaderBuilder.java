@@ -13,7 +13,7 @@ import java.util.function.Predicate;
 
 @Builder
 public class RestApiItemReaderBuilder<T> implements ItemReader<List<T>> {
-    private String url;
+    private String path;
     private Map<String, String> headers;
     private WebClient webClient;
     private Class<T> entity;
@@ -29,7 +29,13 @@ public class RestApiItemReaderBuilder<T> implements ItemReader<List<T>> {
             return null;
         }
         Object[] response = webClient.get()
-                .uri(url)
+                .uri(
+                        uriBuilder -> uriBuilder
+                                .path(path)
+                                .queryParam("page", page)
+                                .queryParam("size", size)
+                                .build()
+                ).headers(httpHeaders -> headers.forEach(httpHeaders::set))
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
                 .bodyToMono(Object[].class).cache().block();

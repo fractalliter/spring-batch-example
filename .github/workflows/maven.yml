@@ -55,16 +55,16 @@ jobs:
           --health-timeout 5s
           --health-retries 5
     steps:
-    - uses: actions/checkout@v3
-    - name: Set up JDK 17
-      uses: actions/setup-java@v3
-      with:
-        java-version: '17'
-        distribution: 'temurin'
-        cache: maven
-    - name: Start Bitname Kafka
-      uses: bbcCorp/kafka-actions@v1
-    - name: Build with Maven
-      env:
-        PROFILE: test
-      run: mvn -B package --file pom.xml
+      - uses: actions/checkout@v3
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: maven
+      - name: Start Bitname Kafka
+        uses: bbcCorp/kafka-actions@v1
+      - name: Build with Maven
+        env:
+          PROFILE: test
+        run: mvn -B package --file pom.xml

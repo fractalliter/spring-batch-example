@@ -12,7 +12,6 @@ import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemWriter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,28 +23,19 @@ import java.util.List;
 
 @Configuration
 public class UserData {
-
-    @Autowired
-    private ObjectMapper objectMapper;
-
-    @Value("${userdata.reader.chunk.size}")
-    private Integer chunkSize;
-
-    @Value("${userdata.reader.resource.url}")
-    private String url;
-
-    @Value("${userdata.reader.page.size}")
-    private int pageSize;
-    @Value("${userdata.reader.start.page}")
-    private int startPage;
-    @Value("${userdata.reader.end.page}")
-    private int endPage;
-
     @Bean(name = "userReader")
-    public ItemReader<List<UserDTO>> reader() {
+    public ItemReader<List<UserDTO>> reader(
+            ObjectMapper objectMapper,
+            @Value("${userdata.reader.resource.host}") String host,
+            @Value("${userdata.reader.resource.path}") String path,
+            @Value("${userdata.reader.page.size}") int pageSize,
+            @Value("${userdata.reader.start.page}") int startPage,
+            @Value("${userdata.reader.end.page}") int endPage
+    ) {
         return RestApiItemReaderBuilder.<UserDTO>builder()
-                .name("fetchUserData")
-                .url(url).webClient(WebClient.create())
+                .name("userReader")
+                .webClient(WebClient.create(host))
+                .path(path)
                 .page(startPage)
                 .size(pageSize)
                 .endRead(currentPage -> currentPage >= endPage)
@@ -68,17 +58,20 @@ public class UserData {
         return jpaBulkItemWriter;
     }
 
-    @Bean
+    @Bean(name = "fetchUserData")
     public Step fetchUserData(
             JobRepository jobRepository,
             PlatformTransactionManager transactionManager,
-            ItemWriter<List<User>> writer
+            ItemWriter<List<User>> userWriter,
+            ItemReader<List<UserDTO>> userReader,
+            UserProcessor userProcessor,
+            @Value("${userdata.reader.chunk.size}") int chunkSize
     ) {
         return new StepBuilder("fetchUserData", jobRepository)
                 .<List<UserDTO>, List<User>>chunk(chunkSize, transactionManager)
-                .reader(reader())
-                .processor(processor())
-                .writer(writer)
+                .reader(userReader)
+                .processor(userProcessor)
+                .writer(userWriter)
                 .build();
     }
 }

@@ -1,9 +1,9 @@
 FROM maven:3.9.1-eclipse-temurin-17-alpine AS build
 WORKDIR /winners
 COPY --chown=maven:maven . /winners
-RUN mvn package
+RUN mvn clean package -Dmaven.test.skip=true
 
-FROM openjdk:17-alpine
+FROM eclipse-temurin:17-alpine
 RUN mkdir "app"
 COPY --from=build /winners/target/*.jar /app/
 WORKDIR /app

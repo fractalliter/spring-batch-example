@@ -14,7 +14,7 @@ import javax.sql.DataSource;
 @SpringBootApplication
 @EnableScheduling
 @EnableJpaAuditing
-@EnableBatchProcessing
+@EnableBatchProcessing(isolationLevelForCreate = "ISOLATION_REPEATABLE_READ")
 public class WinnersApplication {
 
     @Value("${spring.datasource.driver-class-name}")

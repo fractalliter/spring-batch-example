@@ -8,16 +8,12 @@ import org.springframework.kafka.config.TopicBuilder;
 
 @Configuration
 public class KafkaConfiguration {
-
-    @Value("${spring.kafka.template.default-topic}")
-    private String weeklyWinnerTopic;
-    @Value("${spring.kafka.winner.topic.partitions}")
-    private int partitions;
-    @Value("${spring.kafka.winner.topic.replications}")
-    private int replications;
-
-    @Bean
-    public NewTopic topic() {
+    @Bean(name = "topic")
+    public NewTopic topic(
+            @Value("${spring.kafka.template.default-topic}") String weeklyWinnerTopic,
+            @Value("${spring.kafka.winner.topic.partitions}") int partitions,
+            @Value("${spring.kafka.winner.topic.replications}") int replications
+    ) {
         return TopicBuilder.name(weeklyWinnerTopic)
                 .partitions(partitions)
                 .replicas(replications)
