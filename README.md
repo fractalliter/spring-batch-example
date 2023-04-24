@@ -9,6 +9,17 @@ docker compose up
 
 It will download a PostgreSQL, Apache Kafka, [Apache Zookeeper](https://zookeeper.apache.org/) images, and create a contianer from them and also from project's [Dockerfile](https://github.com/fractalliter/jackpot-winner/blob/main/Dockerfile). Then It will deploy and orchestrate them on your machine.
 
+## How to run tests
+
+Deploy an instance of Kafka, Zookeeper, and PostgreSQL database with following comman:
+```bash
+docker compose up db kafka zookeeper
+```
+Then you can execute the test from command line with [Maven](https://maven.apache.org/):
+```bash
+mvn test
+```
+
 ## Job -> LuckyWinnerJob
 
 This job is selecting a weekly winner from a list of customers who meet the threshold amount for transactions.
@@ -84,14 +95,13 @@ the needed relation between user and it's transactions.
 
 The selection of the winner acts like the punchline of the selecting lucky winner. It executes a summation query in
 the database to select the users who have specific criteria, _purchase amount more than the threshold_. The lucky winner
-will be selected and mapped into a DTO. In the end, it will be published into a KAFKA topic for further processing.
+will be selected and mapped into a DTO. In the end, it will be published into a Kafka topic for further processing.
 
 #### 3.1 Reader
 
 The Reader executes a summation SQL query against user's transactions which lays within the last week and picks the ones
-who
-meet the threshold amount. Then It randomly orders them and applies another random OFFSET to selected users and takes
-one row who is the lucky winner
+who meet the threshold amount criteria. Then It randomly orders them and applies another random OFFSET to selected users and takes
+one row who is the lucky winner.
 
 #### 3.2 Processor
 
@@ -99,4 +109,4 @@ The Processor maps the User entity into a UserDTO and passes it over to the Writ
 
 #### 3.3 Writer
 
-The Writer takes the UserDTO from the processor and publish it into a Kafka topic for further processing.
+The Writer takes the UserDTO from the processor and publish it into a Kafka topic for further processing. the message key is generated from hashcode of the winner. The message value is a JSON of UserDTO.
