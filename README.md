@@ -84,10 +84,10 @@ who
 meet the threshold amount. Then It randomly orders them and applies another random OFFSET to selected users and takes
 one row who is the lucky winner
 
-### Processor
+#### Processor
 
 The Processor maps the User entity into a UserDTO and passes it over to the Writer.
 
-### Writer
+#### Writer
 
 The Writer takes the UserDTO from the processor and publish it into a Kafka topic for further processing.
