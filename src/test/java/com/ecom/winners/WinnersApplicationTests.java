@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @SpringBatchTest
 @SpringBootTest
-@ActiveProfiles("dev")
+@ActiveProfiles("test")
 class WinnersApplicationTests {
 
     @Autowired
