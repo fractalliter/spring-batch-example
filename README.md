@@ -110,3 +110,5 @@ The Processor maps the User entity into a UserDTO and passes it over to the Writ
 ##### 3.3 Writer
 
 The Writer takes the UserDTO from the processor and publish it into a Kafka topic for further processing. the message key is generated from hashcode of the winner. The message value is a JSON of UserDTO.
+
+>For more please read the **[documents](https://fractalliter.github.io/spring-batch-example/index.html)**
