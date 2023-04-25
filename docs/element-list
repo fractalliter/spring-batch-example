@@ -1,0 +1,9 @@
+com.ecom.winners
+com.ecom.winners.configurations
+com.ecom.winners.dto
+com.ecom.winners.entity
+com.ecom.winners.notifiers
+com.ecom.winners.readers
+com.ecom.winners.repositories
+com.ecom.winners.transformers
+com.ecom.winners.writers

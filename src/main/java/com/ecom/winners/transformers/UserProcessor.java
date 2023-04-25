@@ -16,6 +16,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
+/**
+ * UserProcessor implements ItemProcessor functional interface.
+ * It transforms the UserDTO list to a list of User entities with mapDtoTOEntity function.
+ */
 public class UserProcessor implements ItemProcessor<List<UserDTO>, List<User>> {
     private static final Logger logger = LoggerFactory.getLogger(TransactionProcessor.class);
     private final Function<UserDTO, User> mapDtoToEntity = userDto -> {
@@ -53,7 +57,7 @@ public class UserProcessor implements ItemProcessor<List<UserDTO>, List<User>> {
 
     @Override
     public List<User> process(final List<UserDTO> items) {
-        logger.info(items.toString());
+        logger.debug(items.toString());
         List<User> users = new ArrayList<>();
         for (UserDTO userDTO : items)
             users.add(mapDtoToEntity.apply(userDTO));

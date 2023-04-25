@@ -21,8 +21,32 @@ import org.springframework.web.reactive.function.client.WebClient;
 import java.util.HashMap;
 import java.util.List;
 
+/**
+ * UserData configuration class comprises fetching user data from an API step.
+ * This class consists of all three phases related to reading user's data from API, transforming user data
+ * to User Entity and persisting it into the database with the help of JPA bulk item writer.
+ * @see Configuration
+ * @see User
+ */
 @Configuration
 public class UserData {
+    /**
+     * User reader bean is responsible for fetching data from an API and path with pagination.
+     * It reads data until the predicate meets the criteria.
+     * For reading the data from API, it uses RestApiItemReader builder to create an Item reader object.
+     * @param objectMapper ObjectMapper for mapping data to UserDTO
+     * @param host the host where data resides, injected from application properties
+     * @param path the path where data resides, injected from application properties
+     * @param pageSize the fetch size for each page, injected from application properties
+     * @param startPage the start page to read, injected from application properties
+     * @param endPage the end page, injected from application properties
+     * @return RestApiItemReader that is an implementation of ItemReader functional interface
+     * @see ItemReader
+     * @see UserDTO
+     * @see ObjectMapper
+     * @see Value
+     * @see Bean
+     */
     @Bean(name = "userReader")
     public ItemReader<List<UserDTO>> reader(
             ObjectMapper objectMapper,
@@ -45,6 +69,12 @@ public class UserData {
                 .build();
     }
 
+    /**
+     * User processor bean creates an instance of UserProcessor that processes user data that comes from reader bean.
+     * @return UserProcessor maps a list of UserDTO to a list of User entities.
+     * @see UserDTO
+     * @see User
+     */
     @Bean(name = "userProcessor")
     public UserProcessor processor() {
         return new UserProcessor();

@@ -10,6 +10,16 @@ import org.springframework.batch.item.ItemProcessor;
 import java.math.BigDecimal;
 import java.util.Optional;
 
+/**
+ * TransactionProcessor is an implementation of ItemProcessor functional interface(SAM) for user's transactions.
+ * It maps the user's transactions from CSV file into User entity.
+ * It checks for the existence of user in the database.
+ * If the user doesn't exist, it won't do the transformation and returns null.
+ * @see AllArgsConstructor
+ * @see ItemProcessor
+ * @see TransactionDTO
+ * @see Transaction
+ */
 @AllArgsConstructor
 public class TransactionProcessor implements ItemProcessor<TransactionDTO, Transaction> {
 

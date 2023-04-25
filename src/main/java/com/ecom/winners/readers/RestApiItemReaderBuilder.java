@@ -11,6 +11,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 
+/**
+ * REST API item reader is a builder for creating an object of item reader functional interface that fetches a page of
+ * data from and API with the help of WebClients library and returns a List of T object for further processing.
+ * It Fetches data from a source, caches the data locally, and maps it to a generic object of type T.
+ * It uses a predicate to end the fetching of data from the data source.
+ * @param <T> generic for a mapping object.
+ * @see ItemReader
+ * @see List
+ */
 @Builder
 public class RestApiItemReaderBuilder<T> implements ItemReader<List<T>> {
     private String path;
