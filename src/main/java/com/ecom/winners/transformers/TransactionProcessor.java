@@ -15,6 +15,7 @@ import java.util.Optional;
  * It maps the user's transactions from CSV file into User entity.
  * It checks for the existence of user in the database.
  * If the user doesn't exist, it won't do the transformation and returns null.
+ *
  * @see AllArgsConstructor
  * @see ItemProcessor
  * @see TransactionDTO

@@ -17,6 +17,7 @@ import javax.sql.DataSource;
  * It uses a scheduler which runs weekly to select a lucky winner from a list of users and their
  * transactions that meets a threshold.
  * Annotations:
+ *
  * @see SpringBootApplication
  * @see EnableScheduling
  * @see EnableJpaAuditing
@@ -47,6 +48,7 @@ public class WinnersApplication {
      * This bean aims to replace the data source initializer bean from JPA.
      * It can be configured for more customization of connection to data sources.
      * In this case, Postgres database.
+     *
      * @return DataSource
      */
     @Bean

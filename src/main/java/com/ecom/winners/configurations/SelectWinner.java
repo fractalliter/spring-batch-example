@@ -69,7 +69,7 @@ public class SelectWinner {
             JdbcCursorItemReader<User> reader
     ) {
         return new StepBuilder("selectLuckyWinner", jobRepository)
-                .<User, UserDTO>chunk(1, transactionManager)
+                .<User, UserDTO>chunk(10, transactionManager)
                 .reader(reader)
                 .processor(processor())
                 .writer(writer)
