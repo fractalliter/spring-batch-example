@@ -43,15 +43,14 @@ public class BatchConfiguration {
 
     @Scheduled(cron = "59 23 * * * SUN")
     public void runSelectingWeeklyWinnerJob() throws Exception {
-        logger.info("Job Started at :" + new Date());
-
         Job job = (Job) applicationContext.getBean("selectingWeeklyWinner");
+        logger.info("Job "+job.getName()+" started at :" + new Date());
         JobParameters param = new JobParametersBuilder()
                 .addString("JobID", String.valueOf(System.currentTimeMillis()))
                 .toJobParameters();
 
         JobExecution execution = jobLauncher.run(job, param);
 
-        logger.info("Job finished with status :" + execution.getStatus());
+        logger.info("Job "+job.getName()+" finished with status :" + execution.getStatus());
     }
 }
