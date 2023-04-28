@@ -1,13 +1,12 @@
 package com.ecom.winners.dto;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
-@Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString
 public class GeoLocationDTO {
     private String lng;
     private String lat;
