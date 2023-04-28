@@ -66,12 +66,13 @@ public class SelectWinner {
             JobRepository jobRepository,
             PlatformTransactionManager transactionManager,
             KafkaItemWriter<String, UserDTO> writer,
-            JdbcCursorItemReader<User> reader
+            JdbcCursorItemReader<User> reader,
+            WinnerProcessor winnerProcessor
     ) {
         return new StepBuilder("selectLuckyWinner", jobRepository)
                 .<User, UserDTO>chunk(10, transactionManager)
                 .reader(reader)
-                .processor(processor())
+                .processor(winnerProcessor)
                 .writer(writer)
                 .build();
     }
