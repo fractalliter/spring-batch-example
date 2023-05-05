@@ -5,7 +5,10 @@ import jakarta.persistence.*;
 import java.util.Set;
 
 @Entity
-@Table(name = "users")
+@Table(
+        name = "users",
+        indexes = {@Index(columnList = "userId")}
+)
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -67,34 +70,6 @@ public class User {
         this.userId = userId;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
-
-    public void setWebsite(String website) {
-        this.website = website;
-    }
-
-    public void setAddress(Address address) {
-        this.address = address;
-    }
-
-    public void setCompany(Company company) {
-        this.company = company;
-    }
-
-    public void setTransactions(Set<Transaction> transactions) {
-        this.transactions = transactions;
-    }
-
     public Long getId() {
         return id;
     }
@@ -103,27 +78,55 @@ public class User {
         return name;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public String getUsername() {
         return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getPhone() {
         return phone;
     }
 
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
     public String getWebsite() {
         return website;
+    }
+
+    public void setWebsite(String website) {
+        this.website = website;
     }
 
     public Address getAddress() {
         return address;
     }
 
+    public void setAddress(Address address) {
+        this.address = address;
+    }
+
     public Company getCompany() {
         return company;
     }
 
+    public void setCompany(Company company) {
+        this.company = company;
+    }
+
     public Set<Transaction> getTransactions() {
         return transactions;
+    }
+
+    public void setTransactions(Set<Transaction> transactions) {
+        this.transactions = transactions;
     }
 }
