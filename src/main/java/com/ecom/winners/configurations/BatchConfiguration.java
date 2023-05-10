@@ -21,8 +21,8 @@ import java.util.Date;
 public class BatchConfiguration {
     private static final Logger logger = LoggerFactory.getLogger(BatchConfiguration.class);
 
-    ApplicationContext applicationContext;
-    JobLauncher jobLauncher;
+    private final ApplicationContext applicationContext;
+    private final JobLauncher jobLauncher;
 
     @Bean
     public Job selectingWeeklyWinner(
