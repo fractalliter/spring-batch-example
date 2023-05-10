@@ -9,13 +9,12 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class JobCompletionNotificationListener implements JobExecutionListener {
-
     private static final Logger log = LoggerFactory.getLogger(JobCompletionNotificationListener.class);
 
     @Override
     public void afterJob(JobExecution jobExecution) {
         if (jobExecution.getStatus() == BatchStatus.COMPLETED) {
-            log.debug("!!! JOB FINISHED! Time to verify the results");
+            log.info("!!! JOB FINISHED! Time to verify the results");
         }
     }
 }
