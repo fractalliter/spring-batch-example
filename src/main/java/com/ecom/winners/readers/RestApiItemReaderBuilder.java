@@ -9,8 +9,8 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Flux;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
@@ -43,7 +43,7 @@ public class RestApiItemReaderBuilder<T> implements ItemReader<List<T>> {
         if (endRead.test(page)) {
             return null;
         }
-        Object[] response = webClient.get()
+        Flux<T> responseFlux = webClient.get()
                 .uri(
                         uriBuilder -> uriBuilder
                                 .path(path)
@@ -54,15 +54,8 @@ public class RestApiItemReaderBuilder<T> implements ItemReader<List<T>> {
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
                 .onStatus(HttpStatusCode::isError, ClientResponse::createException)
-                .bodyToMono(Object[].class).cache().block();
+                .bodyToFlux(entity).cache();
         page += 1;
-        List<T> mappedObjects = new ArrayList<>();
-        assert response != null;
-        for (Object obj : response) {
-            T mappedObj = mapper.convertValue(obj, entity);
-            mappedObjects.add(mappedObj);
-            log.debug(mappedObj.toString());
-        }
-        return mappedObjects;
+        return responseFlux.collectList().block();
     }
 }
