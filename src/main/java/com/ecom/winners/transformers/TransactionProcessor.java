@@ -5,7 +5,7 @@ import com.ecom.winners.entity.Transaction;
 import com.ecom.winners.entity.User;
 import com.ecom.winners.repositories.UserRepository;
 import lombok.AllArgsConstructor;
-import org.springframework.batch.item.ItemProcessor;
+import org.springframework.batch.infrastructure.item.ItemProcessor;
 
 import java.math.BigDecimal;
 import java.util.Optional;

@@ -1,7 +1,5 @@
 package com.ecom.winners;
 
-import com.zaxxer.hikari.util.IsolationLevel;
-import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -21,13 +19,10 @@ import javax.sql.DataSource;
  * @see SpringBootApplication
  * @see EnableScheduling
  * @see EnableJpaAuditing
- * @see EnableBatchProcessing
- * @see IsolationLevel
  */
 @SpringBootApplication
 @EnableScheduling
 @EnableJpaAuditing
-@EnableBatchProcessing(isolationLevelForCreate = "ISOLATION_REPEATABLE_READ")
 public class WinnersApplication {
 
     @Value("${spring.datasource.driver-class-name}")

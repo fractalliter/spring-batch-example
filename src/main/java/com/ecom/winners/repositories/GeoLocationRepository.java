@@ -1,7 +1,8 @@
 package com.ecom.winners.repositories;
 
 import com.ecom.winners.entity.GeoLocation;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.CrudRepository;
 
-public interface GeoLocationRepository extends CrudRepository<GeoLocation, Long> {
+public interface GeoLocationRepository extends JpaRepository<GeoLocation, Long> {
 }
