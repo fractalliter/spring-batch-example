@@ -102,7 +102,7 @@ public class SelectWinner {
                             GROUP BY t.user_id
                             HAVING SUM(t.amount) > %.2f
                         ) AS ts
-                        ORDER BY RAND()
+                        ORDER BY RANDOM()
                         LIMIT 1
                         """, threshold);
 
@@ -162,10 +162,13 @@ public class SelectWinner {
             WinnerProcessor winnerProcessor
     ) {
         return new StepBuilder("selectLuckyWinner", jobRepository)
-                .<User, UserDTO>chunk(10, transactionManager)
+                .<User, UserDTO>chunk(10).transactionManager(transactionManager)
                 .reader(reader)
                 .processor(winnerProcessor)
                 .writer(writer)
+                .faultTolerant()
+                .skip(Exception.class)
+                .skipLimit(10)
                 .build();
     }
 }

@@ -120,10 +120,13 @@ public class UserTransaction {
             @Value("${transaction.reader.chunk.size}") int chunkSize
     ) {
         return new StepBuilder("insertUserTransactions", jobRepository)
-                .<TransactionDTO, Transaction>chunk(chunkSize, transactionManager)
+                .<TransactionDTO, Transaction>chunk(chunkSize).transactionManager(transactionManager)
                 .reader(transactionReader)
                 .processor(transactionProcessor)
                 .writer(transactionWriter)
+                .faultTolerant()
+                .skip(Exception.class)
+                .skipLimit(10)
                 .build();
     }
 

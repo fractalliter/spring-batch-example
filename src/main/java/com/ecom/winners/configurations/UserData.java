@@ -101,10 +101,13 @@ public class UserData {
             @Value("${userdata.reader.chunk.size}") int chunkSize
     ) {
         return new StepBuilder("fetchUserData", jobRepository)
-                .<List<UserDTO>, List<User>>chunk(chunkSize, transactionManager)
+                .<List<UserDTO>, List<User>>chunk(chunkSize).transactionManager(transactionManager)
                 .reader(userReader)
                 .processor(userProcessor)
                 .writer(userWriter)
+                .faultTolerant()
+                .skip(Exception.class)
+                .skipLimit(10)
                 .build();
     }
 }
