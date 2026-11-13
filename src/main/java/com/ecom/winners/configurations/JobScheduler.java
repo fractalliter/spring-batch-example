@@ -9,7 +9,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import java.util.Properties;
 
 /**
- * Lập lịch chạy job chọn người chiến thắng mỗi Chủ Nhật lúc 23:59.
+ * Lập lịch chạy job chọn người chiến thắng mỗi ngày lúc 00:01:30.
  *
  * <p>Tách khỏi {@link BatchConfiguration} để tránh circular dependency:
  * <pre>
@@ -34,10 +34,10 @@ public class JobScheduler {
     }
 
     /**
-     * Trigger job mỗi Chủ Nhật 23:59:00.
+     * Trigger job mỗi ngày lúc 00:01:30.
      * Dùng {@link JobOperator#start(String, Properties)} — API chính trong Spring Batch 6.
      */
-    @Scheduled(cron = "0 59 23 * * SUN", zone = "${APP_TIME_ZONE:Asia/Ho_Chi_Minh}")
+    @Scheduled(cron = "30 1 0 * * *", zone = "${APP_TIME_ZONE:Asia/Ho_Chi_Minh}")
     public void runSelectingWeeklyWinnerJob() throws Exception {
         logger.info("Triggering selectingWeeklyWinner job...");
         Properties params = new Properties();

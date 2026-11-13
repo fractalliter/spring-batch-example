@@ -43,6 +43,7 @@ public class RestApiItemReaderBuilder<T> implements ItemReader<List<T>> {
         if (endRead.test(page)) {
             return null;
         }
+        int currentPage = page;
         Flux<T> responseFlux = webClient.get()
                 .uri(
                         uriBuilder -> uriBuilder
@@ -56,6 +57,9 @@ public class RestApiItemReaderBuilder<T> implements ItemReader<List<T>> {
                 .onStatus(HttpStatusCode::isError, ClientResponse::createException)
                 .bodyToFlux(entity).cache();
         page += 1;
-        return responseFlux.collectList().block();
+        List<T> items = responseFlux.collectList().block();
+        log.info("Reader [{}] — GET {}?page={}&size={} → đọc {} mục", name, path, currentPage, size,
+                items == null ? 0 : items.size());
+        return items;
     }
 }

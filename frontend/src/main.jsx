@@ -136,7 +136,7 @@ function App() {
             ? 'Hệ thống đang chọn, kết quả sẽ hiện sau ít phút.'
             : latest
               ? 'Lần chọn gần nhất đã xong. Xem chi tiết bên dưới.'
-              : 'Chưa có lần chọn nào trong tuần. Bạn có thể chọn ngay hoặc đợi Chủ Nhật 23:59.'}
+              : 'Chưa có lần chọn nào trong tuần. Bạn có thể chọn ngay hoặc đợi lần chạy 00:01:30.'}
         </p>
         <div className="hero-actions">
           <button type="button" className="button primary" onClick={startJob}

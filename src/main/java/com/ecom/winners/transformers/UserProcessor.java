@@ -21,7 +21,7 @@ import java.util.function.Function;
  * It transforms the UserDTO list to a list of User entities with mapDtoTOEntity function.
  */
 public class UserProcessor implements ItemProcessor<List<UserDTO>, List<User>> {
-    private static final Logger logger = LoggerFactory.getLogger(TransactionProcessor.class);
+    private static final Logger logger = LoggerFactory.getLogger(UserProcessor.class);
     private final Function<UserDTO, User> mapDtoToEntity = userDto -> {
         User user = new User();
         Address address = new Address();
@@ -57,10 +57,12 @@ public class UserProcessor implements ItemProcessor<List<UserDTO>, List<User>> {
 
     @Override
     public List<User> process(final List<UserDTO> items) {
-        logger.debug(items.toString());
+        logger.info("Processor — biến đổi {} UserDTO thành entity User", items.size());
         List<User> users = new ArrayList<>();
-        for (UserDTO userDTO : items)
+        for (UserDTO userDTO : items) {
+            logger.info("Processor — user #{}: {} (@{})", userDTO.getId(), userDTO.getName(), userDTO.getUsername());
             users.add(mapDtoToEntity.apply(userDTO));
+        }
         return users;
     }
 }

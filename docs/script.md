@@ -21,7 +21,7 @@ Nếu nghĩ đơn giản thì việc này dễ ợt, đúng không? Chỉ cần 
 
 Thứ nhất, nó chạy định kỳ, không trả lời ngay. Mỗi tháng chỉ làm một lần, vào nửa đêm, khách hàng không đứng đợi kết quả. Thứ hai, dữ liệu cực lớn, nhiều gigabyte, không thể tải hết vào bộ nhớ. Thứ ba, ưu tiên độ chính xác tuyệt đối, cộng thiếu hay cộng dư một đồng cũng là sự cố.
 
-Loại công việc xử lý dữ liệu lớn theo lô, định kỳ như thế này, người ta gọi là Batch. Trong dự án demo của mình cũng đúng bản chất đó: job chỉ chạy một lần mỗi tuần vào Chủ Nhật 23:59, không ai đứng đợi trước màn hình.
+Loại công việc xử lý dữ liệu lớn theo lô, định kỳ như thế này, người ta gọi là Batch. Trong dự án demo của mình cũng đúng bản chất đó: job chạy hằng ngày lúc 00:01:30, không ai đứng đợi trước màn hình.
 
 ---
 
@@ -53,7 +53,253 @@ Trong dự án demo, mình dùng Spring Batch 6.0.6 — đúng phiên bản mớ
 
 ## Slide 5 — Kiến trúc tổng thể
 
-Về kiến trúc tổng thể, Spring Batch có hai luồng xử lý. Một luồng là các batch job chạy ngầm định kỳ. Luồng còn lại là phần ứng dụng thường ngày.
+### 1. Giới thiệu tổng quan
+
+“Ok, thì ở đây em sẽ đi qua tổng quan về kiến trúc của Spring Batch Framework và cách một batch job được thực thi từ lúc bắt đầu cho tới khi hoàn thành.
+
+Nhìn tổng thể sơ đồ thì mình có thể chia thành các phần chính như sau.
+
+Đầu tiên là **bộ kích hoạt Batch**, tiếp theo là **JobLauncher**, sau đó là phần xử lý chính gồm **Job, Step, ItemReader, ItemProcessor và ItemWriter**.
+
+Bên dưới là **JobRepository**, có nhiệm vụ quản lý và lưu trạng thái thực thi của toàn bộ quá trình.
+
+Cụ thể 
+
+### 2. Bước 1 – Job Scheduler / CLI kích hoạt Batch
+
+“Đầu tiên, ở phía bên trái sơ đồ là **Job Scheduler hoặc CLI**.
+
+Đây là nơi khởi tạo quá trình chạy batch.
+
+Thì thực tế mình có thể trigger batch bằng nhiều cách khác nhau.
+
+Ví dụ như dùng `@Scheduled` để cấu hình chạy tự động theo lịch, chẳng hạn mỗi ngày lúc 12 giờ đêm.
+
+Hoặc có thể chạy thủ công thông qua CommandLineJobRunner, hay gọi từ một Admin REST API.
+
+Nói chung, phần này chỉ đóng vai trò là **điểm kích hoạt**, chứ chưa trực tiếp xử lý dữ liệu.
+
+Sau khi nhận được yêu cầu chạy, hệ thống sẽ chuyển sang JobLauncher.”
+
+### 3. Bước 2 – JobLauncher khởi chạy Job
+
+“Tiếp theo là **JobLauncher**.
+
+Thì JobLauncher có nhiệm vụ khởi chạy một Job cụ thể.
+
+Khi gọi `run()`, mình sẽ truyền vào hai thành phần chính.
+
+Một là Job cần thực thi.
+
+Hai là JobParameters, tức là những tham số đi kèm với lần chạy đó.
+
+Ví dụ như ngày xử lý dữ liệu, mã batch, hoặc một số tham số phục vụ cho logic nghiệp vụ.
+
+Ở bước này, Spring Batch sẽ phối hợp với JobRepository để quản lý thông tin của lần chạy.
+
+Cụ thể là xác định JobInstance tương ứng với Job và JobParameters, đồng thời tạo JobExecution để theo dõi lần thực thi hiện tại.
+
+Trạng thái ban đầu sẽ được ghi nhận, và khi bắt đầu thực thi thì JobExecution sẽ chuyển sang trạng thái STARTED.
+
+Một điểm cần lưu ý là **JobInstance và JobExecution không giống nhau**.
+
+JobInstance đại diện cho một lần chạy logic, được xác định dựa trên Job và JobParameters có tính định danh.
+
+Còn JobExecution đại diện cho một lần thực thi thực tế của JobInstance đó.
+
+Ví dụ cùng một JobInstance, nếu lần chạy đầu tiên bị lỗi và mình restart lại, thì có thể phát sinh một JobExecution mới.
+
+Sau khi hoàn tất các bước khởi tạo, JobLauncher sẽ bắt đầu thực thi Job.”
+
+### 4. Bước 3 – Job điều phối các Step
+
+“Tiếp theo là thành phần **Job**.
+
+Mọi người có thể hiểu đơn giản Job chính là đơn vị công việc tổng thể của Spring Batch.
+
+Một Job sẽ bao gồm một hoặc nhiều Step.
+
+Ví dụ trong một bài toán xử lý dữ liệu tài khoản, mình có thể chia thành ba Step.
+
+Step đầu tiên đọc và kiểm tra dữ liệu đầu vào.
+
+Step thứ hai xử lý nghiệp vụ.
+
+Và Step thứ ba tổng hợp hoặc xuất kết quả.
+
+Tùy vào thiết kế, các Step có thể được thực hiện tuần tự hoặc theo flow điều kiện.
+
+Trong sơ đồ này, em đang tập trung vào trường hợp một Step xử lý dữ liệu theo mô hình Chunk.
+
+Khi Job chạy đến Step tương ứng, Spring Batch sẽ bắt đầu thực thi phần xử lý bên trong Step đó.”
+
+### 5. Bước 4 – Step thực thi theo Chunk-Oriented Processing
+
+“Đến phần quan trọng nhất của sơ đồ, đó là **Step**.
+
+Trong Spring Batch thì Step là đơn vị thực thi cụ thể.
+
+Có hai cách triển khai phổ biến.
+
+Một là Tasklet, thường dùng cho các tác vụ đơn giản, ví dụ xóa file, gọi API hoặc thực hiện một thao tác đơn lẻ.
+
+Hai là Chunk-Oriented Processing, thường dùng để xử lý lượng dữ liệu lớn.
+
+Ở sơ đồ này, em đang sử dụng mô hình Chunk.
+
+Thì thay vì đọc toàn bộ dữ liệu vào memory rồi xử lý một lần, Spring Batch sẽ chia dữ liệu thành từng nhóm nhỏ, gọi là Chunk.
+
+Ví dụ mình có 5 triệu tài khoản cần xử lý và cấu hình chunk size bằng 1.000.
+
+Thì hệ thống sẽ đọc và xử lý dữ liệu theo từng nhóm, tối đa 1.000 bản ghi trong một Chunk.
+
+Mỗi Chunk sẽ được xử lý trong một transaction riêng.
+
+Bây giờ em sẽ đi vào ba thành phần chính bên trong Step.”
+
+### 6. Bước 5 – ItemReader đọc dữ liệu đầu vào
+
+“Đầu tiên là **ItemReader**.
+
+ItemReader chịu trách nhiệm đọc dữ liệu từ nguồn đầu vào.
+
+Nguồn này có thể là database, file CSV, XML hoặc một hệ thống dữ liệu khác.
+
+Ví dụ trong trường hợp này, mình có 5 triệu tài khoản nằm trong database.
+
+Thì ItemReader sẽ lần lượt đọc từng bản ghi và trả dữ liệu về cho Spring Batch.
+
+Một điểm cần chú ý là ItemReader thường trả về từng item thông qua phương thức `read()`.
+
+Spring Batch sẽ gọi `read()` nhiều lần để thu thập đủ dữ liệu cho một Chunk.
+
+Ví dụ chunk size bằng 1.000 thì framework sẽ lần lượt đọc tối đa 1.000 item để đưa sang bước xử lý tiếp theo.
+
+Khi hết dữ liệu, phương thức `read()` sẽ trả về null, lúc này Spring Batch hiểu rằng không còn item nào cần xử lý.
+
+Nếu Reader hỗ trợ lưu trạng thái, ví dụ thông qua ItemStream, thì vị trí đọc cũng có thể được lưu vào ExecutionContext.
+
+Thông tin này sẽ phục vụ cho việc restart khi Job bị lỗi giữa chừng.”
+
+### 7. Bước 6 – ItemProcessor xử lý nghiệp vụ
+
+“Sau khi đọc dữ liệu xong thì các item sẽ được chuyển qua **ItemProcessor**.
+
+Đây là nơi thực hiện logic nghiệp vụ.
+
+Ví dụ mình có thể kiểm tra tài khoản có hợp lệ hay không, chuẩn hóa thông tin, tính toán dữ liệu hoặc chuyển đổi từ object đầu vào sang object đầu ra.
+
+Trong Spring Batch, ItemProcessor sẽ xử lý từng item thông qua phương thức `process()`.
+
+Ví dụ Reader đọc được một tài khoản, thì Processor sẽ kiểm tra trạng thái tài khoản đó.
+
+Nếu hợp lệ thì trả về dữ liệu đã xử lý.
+
+Nếu không muốn đưa item đó sang bước ghi, Processor có thể trả về null để filter item.
+
+Ngoài ra, nếu trong quá trình xử lý phát sinh exception thì tùy theo cấu hình, Spring Batch có thể thực hiện retry, skip hoặc đánh dấu Step thất bại.
+
+Sau khi các item được xử lý, những item hợp lệ sẽ được gom lại để chuyển sang ItemWriter.”
+
+### 8. Bước 7 – ItemWriter ghi dữ liệu đầu ra
+
+“Tiếp theo là **ItemWriter**.
+
+ItemWriter chịu trách nhiệm ghi dữ liệu sau khi đã được xử lý.
+
+Ví dụ mình có thể ghi xuống PostgreSQL, Redis, file hoặc một hệ thống bên ngoài.
+
+Điểm khác biệt so với Reader và Processor là Writer thường nhận một Chunk gồm nhiều item để thực hiện ghi theo lô.
+
+Ví dụ chunk size bằng 1.000, sau khi đọc và xử lý đủ số lượng item tương ứng, Spring Batch sẽ gọi `write()` với Chunk chứa các item được giữ lại sau bước Processor.
+
+Nếu mình sử dụng JDBC Batch thì có thể gom nhiều câu lệnh insert hoặc update để giảm số lần tương tác với database.
+
+Điều này đặc biệt hữu ích khi xử lý lượng dữ liệu lớn.
+
+Sau khi Writer thực hiện thành công và transaction được commit, Spring Batch sẽ tiếp tục xử lý Chunk tiếp theo.
+
+Quá trình Reader, Processor và Writer sẽ lặp lại liên tục cho tới khi không còn dữ liệu đầu vào.”
+
+### 9. Bước 8 – JobRepository lưu trạng thái và hỗ trợ Restart
+
+“Bây giờ em sẽ nói đến phần bên dưới sơ đồ, đó là **JobRepository**.
+
+Đây là thành phần rất quan trọng của Spring Batch.
+
+JobRepository có nhiệm vụ quản lý metadata của quá trình thực thi Job và Step.
+
+Ví dụ như Job nào đang chạy, Step nào đã hoàn thành, Step nào bị lỗi và số lượng dữ liệu đã được xử lý.
+
+Trong quá trình thực thi, Spring Batch sẽ cập nhật các thông tin như readCount, writeCount, skipCount và commitCount.
+
+Ngoài ra còn có JobExecutionContext và StepExecutionContext.
+
+Hai thành phần này được sử dụng để lưu trạng thái cần thiết phục vụ cho quá trình thực thi và restart.
+
+Ví dụ một Job đang xử lý 5 triệu bản ghi.
+
+Sau khi xử lý được 3 triệu bản ghi thì hệ thống gặp lỗi.
+
+Nếu Reader và các thành phần liên quan được thiết kế hỗ trợ restart đúng cách, Spring Batch có thể sử dụng trạng thái đã lưu trong ExecutionContext để tiếp tục từ checkpoint phù hợp.
+
+Như vậy mình không nhất thiết phải xử lý lại toàn bộ 5 triệu bản ghi từ đầu.
+
+Tuy nhiên, việc restart chính xác còn phụ thuộc vào cách triển khai Reader, Writer, transaction và cấu hình của Job.
+
+Một điểm nữa là JobRepository không trực tiếp lưu dữ liệu nghiệp vụ.
+
+Nó chủ yếu lưu metadata phục vụ cho việc quản lý quá trình thực thi Batch.”
+
+### 10. Bước 9 – Database Metadata
+
+“Tiếp theo, toàn bộ metadata này sẽ được lưu xuống database thông qua JDBC.
+
+Ở phía dưới sơ đồ là nhóm các bảng metadata mặc định của Spring Batch.
+
+Ví dụ như BATCH_JOB_INSTANCE để lưu thông tin JobInstance.
+
+BATCH_JOB_EXECUTION để lưu các lần thực thi Job.
+
+Và BATCH_STEP_EXECUTION để lưu trạng thái thực thi của từng Step.
+
+Ngoài ba bảng này còn có các bảng lưu JobParameters và ExecutionContext.
+
+Tổng cộng Spring Batch có sáu bảng metadata chính, bên cạnh các bảng sequence hoặc thành phần hỗ trợ tùy database.
+
+Nhờ những bảng này, mình có thể truy vấn lịch sử thực thi, kiểm tra trạng thái Batch và xác định nguyên nhân khi một Job gặp lỗi.
+
+Đồng thời, đây cũng là nền tảng hỗ trợ cơ chế restart của Spring Batch.”
+
+### 11. Tổng kết toàn bộ Flow
+
+“Ok, thì em sẽ tổng kết lại toàn bộ flow một lần nữa.
+
+Đầu tiên, Scheduler hoặc CLI sẽ trigger Batch.
+
+Sau đó JobLauncher nhận yêu cầu và khởi chạy Job cùng với JobParameters.
+
+Spring Batch sẽ tạo hoặc xác định JobInstance tương ứng, tạo JobExecution và ghi nhận trạng thái thực thi thông qua JobRepository.
+
+Tiếp theo, Job sẽ điều phối các Step.
+
+Ở mỗi Step sử dụng Chunk-Oriented Processing, ItemReader sẽ đọc dữ liệu, ItemProcessor xử lý nghiệp vụ và ItemWriter ghi kết quả.
+
+Quá trình này được thực hiện lặp lại theo từng Chunk.
+
+Sau mỗi Chunk được commit thành công, Spring Batch sẽ cập nhật trạng thái và các thông tin cần thiết vào JobRepository.
+
+Khi toàn bộ dữ liệu được xử lý thành công, Step sẽ hoàn thành, sau đó Job cũng được đánh dấu COMPLETED.
+
+Còn nếu xảy ra lỗi không được xử lý, Step hoặc Job có thể chuyển sang trạng thái FAILED.
+
+Dựa trên metadata đã lưu, mình có thể kiểm tra nguyên nhân lỗi và thực hiện restart nếu Job đáp ứng các điều kiện restart.
+
+Như vậy, **điểm mạnh của Spring Batch không chỉ nằm ở việc xử lý dữ liệu theo từng Chunk, mà còn ở khả năng quản lý transaction, theo dõi trạng thái, xử lý lỗi và hỗ trợ restart**.
+
+Đây là những yếu tố rất quan trọng đối với các hệ thống cần xử lý khối lượng dữ liệu lớn.
+
+Đó là tổng quan về flow hoạt động của Spring Batch Framework mà em muốn trình bày.”
 
 Cái hay của dự án demo này là nó có đủ cả hai. Phần batch là job chọn người thắng, chạy ngầm. Phần ứng dụng thường ngày là một dashboard web, làm giao diện điều khiển và xem kết quả. Và hai luồng này gặp nhau ở Kafka và PostgreSQL: batch chạy xong bắn kết quả lên Kafka, dashboard đọc từ database và API để hiển thị.
 
@@ -153,7 +399,7 @@ Slide này ánh xạ trực tiếp sang code demo. Mình không cần annotation
 
 Giờ mình muốn đi chậm lại một chút, đi theo đúng luồng gọi hàm trong code, từng file một, để các bạn thấy khi job chạy thì thực sự hàm nào gọi hàm nào.
 
-Bước 1 — điểm bấm máy: file `src/main/java/com/ecom/winners/configurations/JobScheduler.java`. Class này có một hàm `runSelectingWeeklyWinnerJob()`, gắn annotation `@Scheduled(cron = "0 59 23 * * SUN", zone = "${APP_TIME_ZONE:Asia/Ho_Chi_Minh}")` — nghĩa là Spring sẽ tự gọi hàm này mỗi Chủ Nhật 23:59 theo múi giờ trong file `.env`. Trong hàm, nó tạo một object `Properties`, đặt `JobID` là timestamp hiện tại — tại sao cần tham số này thì slide sau mình giải thích — rồi gọi `jobOperator.start("selectingWeeklyWinner", params)`. `JobOperator` là bean Spring Boot tự cấp nhờ starter batch-jdbc, inject thẳng vào constructor của `JobScheduler`.
+Bước 1 — điểm bấm máy: file `src/main/java/com/ecom/winners/configurations/JobScheduler.java`. Class này có một hàm `runSelectingWeeklyWinnerJob()`, gắn annotation `@Scheduled(cron = "30 1 0 * * *", zone = "${APP_TIME_ZONE:Asia/Ho_Chi_Minh}")` — nghĩa là Spring sẽ tự gọi hàm này hằng ngày lúc 00:01:30 theo múi giờ trong file `.env`. Trong hàm, nó tạo một object `Properties`, đặt `JobID` là timestamp hiện tại — tại sao cần tham số này thì slide sau mình giải thích — rồi gọi `jobOperator.start("selectingWeeklyWinner", params)`. `JobOperator` là bean Spring Boot tự cấp nhờ starter batch-jdbc, inject thẳng vào constructor của `JobScheduler`.
 
 Một câu hỏi hay thường bị hỏi: tại sao tách `JobScheduler` ra khỏi file khai báo job? Vì circular dependency: `JobOperator` cần bean Job, mà `JobScheduler` lại cần inject `JobOperator`. Nếu viết cùng một class vừa khai báo Job vừa inject JobOperator thì Spring không giải nổi vòng phụ thuộc. Tách hai class là phá vòng tròn.
 
@@ -181,7 +427,7 @@ Vậy luồng gọi hàm hoàn chỉnh là: `JobScheduler.runSelectingWeeklyWinn
 
 Có ba cách khởi chạy job: bằng Java qua `JobOperator`, bằng dòng lệnh qua `CommandLineJobRunner`, hoặc theo lịch.
 
-Dự án demo dùng cả hai đường đầu. Đường tự động: `JobScheduler.java` khai báo annotation `@Scheduled(cron = "0 59 23 * * SUN", zone = ...)` — mỗi Chủ Nhật 23:59 theo múi giờ cấu hình trong `.env`, nó gọi `JobOperator` để chạy job. Đường thủ công: chính là cái nút trên dashboard, lát nữa mình nói kỹ ở phần demo.
+Dự án demo dùng cả hai đường đầu. Đường tự động: `JobScheduler.java` khai báo annotation `@Scheduled(cron = "30 1 0 * * *", zone = ...)` — hằng ngày lúc 00:01:30 theo múi giờ cấu hình trong `.env`, nó gọi `JobOperator` để chạy job. Đường thủ công: chính là cái nút trên dashboard, lát nữa mình nói kỹ ở phần demo.
 
 Còn đọc nhật ký thì chuẩn Spring Batch: "Executing step", "Step executed in bao nhiêu ms", "Job completed with status COMPLETED". Cái này trong log của dự án bây giờ vẫn in ra y như vậy, anh em xem terminal là thấy.
 

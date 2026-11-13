@@ -35,7 +35,7 @@ public class StepLogCapture extends AppenderBase<ILoggingEvent> {
     private static final DateTimeFormatter TIME = DateTimeFormatter.ofPattern("HH:mm:ss.SSS");
 
     private final Sinks.Many<LogLine> stream =
-            Sinks.many().replay().limit(1000);
+            Sinks.many().replay().limit(5000);
 
     private volatile String currentStep = "";
 

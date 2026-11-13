@@ -92,6 +92,7 @@ public class SelectWinner {
                     return null;
                 }
 
+                logger.info("Winner — chọn {} (user_id={})", users.get(0).getName(), winnerUserId);
                 return users.get(0);
             }
         };

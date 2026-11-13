@@ -31,6 +31,10 @@ import java.util.List;
  */
 @Configuration
 public class UserData {
+
+    private static final org.slf4j.Logger logger =
+            org.slf4j.LoggerFactory.getLogger(UserData.class);
+
     /**
      * User reader bean is responsible for fetching data from an API and path with pagination.
      * It reads data until the predicate meets the criteria.
@@ -90,6 +94,7 @@ public class UserData {
             for (List<User> users : chunk) {
                 for (User incoming : users) {
                     User user = repository.findByUserId(incoming.getUserId()).orElseGet(User::new);
+                    boolean existed = user.getId() != null;
                     user.setUserId(incoming.getUserId());
                     user.setName(incoming.getName());
                     user.setUsername(incoming.getUsername());
@@ -114,6 +119,8 @@ public class UserData {
                         user.getCompany().setBs(incoming.getCompany().getBs());
                     }
                     repository.save(user);
+                    logger.info("Writer — {} user #{}: {}", existed ? "cập nhật" : "chèn mới",
+                            incoming.getUserId(), incoming.getName());
                 }
             }
         };

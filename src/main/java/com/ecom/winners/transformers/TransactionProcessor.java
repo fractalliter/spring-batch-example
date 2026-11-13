@@ -24,16 +24,24 @@ import java.util.Optional;
 @AllArgsConstructor
 public class TransactionProcessor implements ItemProcessor<TransactionDTO, Transaction> {
 
+    private static final org.slf4j.Logger logger =
+            org.slf4j.LoggerFactory.getLogger(TransactionProcessor.class);
+
     private final UserRepository userRepository;
 
     @Override
     public Transaction process(final TransactionDTO transactionDTO) {
         Optional<User> user = userRepository.findByUserId(transactionDTO.getUser_id());
-        if (user.isEmpty())
+        if (user.isEmpty()) {
+            logger.info("Processor — bỏ qua giao dịch: user_id={} không có trong DB",
+                    transactionDTO.getUser_id());
             return null;
+        }
         Transaction transaction = new Transaction();
         transaction.setUserId(user.get());
         transaction.setAmount(new BigDecimal(transactionDTO.getAmount()));
+        logger.info("Processor — giao dịch của {} (user_id={}): amount={}",
+                user.get().getName(), user.get().getUserId(), transactionDTO.getAmount());
         return transaction;
     }
 }

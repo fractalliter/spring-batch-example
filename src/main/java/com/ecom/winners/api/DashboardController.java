@@ -120,7 +120,7 @@ public class DashboardController {
             }
         }
         runs.sort(Comparator.comparingLong(Run::id).reversed());
-        return new Dashboard(JOB_NAME, "Chủ Nhật · 23:59", threshold, topic, csvPath, source,
+        return new Dashboard(JOB_NAME, "Hàng ngày · 00:01:30", threshold, topic, csvPath, source,
                 users.count(), transactions.count(),
                 !explorer.findRunningJobExecutions(JOB_NAME).isEmpty(),
                 runs.stream().limit(10).toList());
