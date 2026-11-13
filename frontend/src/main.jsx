@@ -143,6 +143,8 @@ function App() {
             disabled={dashboard.running || action.busy}>
             {action.busy ? 'Đang gửi…' : dashboard.running ? 'Đang chạy…' : 'Chọn ngay'}
           </button>
+          <a className="button" href={__KAFKA_UI_URL__} target="_blank" rel="noopener noreferrer"
+            title="Mở Kafka UI để xem message trên topic lucky_winner">Xem Kafka</a>
           <button type="button" className="button" onClick={refresh} title="Làm mới">Làm mới</button>
         </div>
         <div className="action-note" role="status" aria-live="polite">

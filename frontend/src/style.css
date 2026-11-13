@@ -71,6 +71,7 @@ h2 { font-size: 15px; font-weight: 720; }
 .button.primary { flex: 1; border-color: #232830; background: #B78E79; color: #FFFFFF; box-shadow: 0 1px 0 #8A5D47; }
 .button.primary:hover { background: #8A5D47; }
 .button:disabled { opacity: .55; cursor: default; box-shadow: none; }
+a.button { display: inline-flex; align-items: center; text-decoration: none; }
 
 /* ===== Tabs: mặc định nhạt, tab đang chọn khác hẳn (NullHypothesis) ===== */
 .tabs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4px; margin-top: 18px; background: #E8EBED; border: 1px solid #D1D5D9; border-radius: 5px; padding: 3px; }
