@@ -272,7 +272,10 @@ function LogStream({ step, onClose }) {
   useEffect(() => {
     const source = new EventSource(`/api/logs/stream?step=${encodeURIComponent(step)}`)
     source.onopen = () => setConnected(true)
-    source.onmessage = (event) => setLines((prev) => [...prev.slice(-400), event.data])
+    source.onmessage = (event) => {
+      const text = event.data
+      setLines((prev) => [...prev.slice(-400), text])
+    }
     source.onerror = () => setConnected(false)
     return () => source.close()
   }, [step])
@@ -295,7 +298,7 @@ function LogStream({ step, onClose }) {
       <pre className="log-box" ref={boxRef}>
         {lines.length === 0
           ? <span className="log-empty">Đang chờ log của {step}… Hãy chạy job để thấy dòng mới.</span>
-          : lines.map((line, index) => <span key={index} className="log-line">{line}</span>)}
+          : lines.map((line, index) => <span key={index} className={line.includes('── Chunk') ? 'log-line log-chunk' : 'log-line'}>{line}</span>)}
       </pre>
       <button type="button" className="button primary dialog-close" autoFocus onClick={onClose}>Đóng</button>
     </div>

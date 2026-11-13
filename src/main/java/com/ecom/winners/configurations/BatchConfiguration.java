@@ -1,5 +1,6 @@
 package com.ecom.winners.configurations;
 
+import com.ecom.winners.notifiers.ChunkLogListener;
 import com.ecom.winners.notifiers.JobCompletionNotificationListener;
 import org.springframework.batch.core.job.Job;
 import org.springframework.batch.core.job.builder.JobBuilder;
@@ -18,6 +19,12 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 public class BatchConfiguration {
+
+    @Bean
+    @org.springframework.batch.core.configuration.annotation.StepScope
+    public ChunkLogListener chunkLogListener() {
+        return new ChunkLogListener();
+    }
 
     @Bean
     public Job selectingWeeklyWinner(

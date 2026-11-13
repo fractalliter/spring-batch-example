@@ -4,6 +4,7 @@ import com.ecom.winners.dto.UserDTO;
 import com.ecom.winners.entity.User;
 import com.ecom.winners.readers.RestApiItemReaderBuilder;
 import com.ecom.winners.transformers.UserProcessor;
+import com.ecom.winners.notifiers.ChunkLogListener;
 import com.ecom.winners.repositories.UserRepository;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.step.Step;
@@ -133,6 +134,7 @@ public class UserData {
             ItemWriter<List<User>> userWriter,
             ItemReader<List<UserDTO>> userReader,
             UserProcessor userProcessor,
+            ChunkLogListener chunkLogListener,
             @Value("${userdata.reader.chunk.size}") int chunkSize
     ) {
         return new StepBuilder("fetchUserData", jobRepository)
@@ -143,6 +145,7 @@ public class UserData {
                 .faultTolerant()
                 .skip(Exception.class)
                 .skipLimit(10)
+                .listener(chunkLogListener)
                 .build();
     }
 }

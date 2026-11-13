@@ -2,6 +2,7 @@ package com.ecom.winners.configurations;
 
 import com.ecom.winners.dto.TransactionDTO;
 import com.ecom.winners.entity.Transaction;
+import com.ecom.winners.notifiers.ChunkLogListener;
 import com.ecom.winners.repositories.UserRepository;
 import com.ecom.winners.transformers.TransactionProcessor;
 import jakarta.persistence.EntityManagerFactory;
@@ -117,6 +118,7 @@ public class UserTransaction {
             PlatformTransactionManager transactionManager,
             JpaItemWriter<Transaction> transactionWriter,
             FlatFileItemReader<TransactionDTO> transactionReader,
+            ChunkLogListener chunkLogListener,
             @Value("${transaction.reader.chunk.size}") int chunkSize
     ) {
         return new StepBuilder("insertUserTransactions", jobRepository)
@@ -127,6 +129,7 @@ public class UserTransaction {
                 .faultTolerant()
                 .skip(Exception.class)
                 .skipLimit(10)
+                .listener(chunkLogListener)
                 .build();
     }
 

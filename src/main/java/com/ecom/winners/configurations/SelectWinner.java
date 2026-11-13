@@ -2,6 +2,7 @@ package com.ecom.winners.configurations;
 
 import com.ecom.winners.dto.UserDTO;
 import com.ecom.winners.entity.User;
+import com.ecom.winners.notifiers.ChunkLogListener;
 import com.ecom.winners.transformers.WinnerProcessor;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
@@ -123,7 +124,8 @@ public class SelectWinner {
             PlatformTransactionManager transactionManager,
             KafkaItemWriter<String, UserDTO> writer,
             ItemReader<User> reader,
-            WinnerProcessor winnerProcessor
+            WinnerProcessor winnerProcessor,
+            ChunkLogListener chunkLogListener
     ) {
         return new StepBuilder("selectLuckyWinner", jobRepository)
                 .<User, UserDTO>chunk(10).transactionManager(transactionManager)
@@ -133,6 +135,7 @@ public class SelectWinner {
                 .faultTolerant()
                 .skip(Exception.class)
                 .skipLimit(10)
+                .listener(chunkLogListener)
                 .build();
     }
 }
