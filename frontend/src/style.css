@@ -1,1 +1,152 @@
 @import "tailwindcss";
+
+@theme {
+  --color-canvas: #F9F8F7;
+  --color-surface: #FFFFFF;
+  --color-almond: #F2EDE7;
+  --color-neutral-soft: #E8EBED;
+  --color-stroke: #D1D5D9;
+  --color-stroke-strong: #A5ACB8;
+  --color-muted: #7A828F;
+  --color-secondary: #5A626E;
+  --color-steel: #414751;
+  --color-ink: #232830;
+  --color-terracotta: #B78E79;
+  --color-terracotta-dark: #8A5D47;
+  --color-cool: #6A8A9E;
+}
+
+:root { font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color: #232830; background: #F9F8F7; font-synthesis: none; }
+* { box-sizing: border-box; }
+body { margin: 0; min-width: 320px; }
+button { font: inherit; }
+button:focus-visible, .tab:focus-visible { outline: 2px solid #6A8A9E; outline-offset: 3px; }
+
+/* ===== Khung trang: một cột, hẹp, để client tập trung ===== */
+.page { min-height: 100vh; }
+.content { max-width: 560px; margin: 0 auto; padding: 0 20px 28px; }
+
+.top { max-width: 560px; margin: 0 auto; padding: 18px 20px 14px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.brand { display: flex; align-items: center; gap: 9px; font-size: 13px; font-weight: 800; letter-spacing: .13em; color: #232830; }
+.brand-mark { width: 24px; height: 24px; border-radius: 5px; background: #B78E79; display: flex; align-items: end; gap: 2px; padding: 5px; }
+.brand-mark span { display: block; width: 3px; background: #FFFFFF; border-radius: 1px; }
+.brand-mark span:nth-child(1) { height: 6px; }
+.brand-mark span:nth-child(2) { height: 11px; }
+.brand-mark span:nth-child(3) { height: 8px; }
+
+/* Vỏ nổi cho thẻ mặt phẳng: nền trắng hơn hẳn nền trang, stroke 1px, bo 5px */
+.card { background: #FFFFFF; border: 1px solid #D1D5D9; border-radius: 5px; padding: 22px; margin-top: 14px; }
+
+h1, h2, p, ul, ol, li { margin: 0; padding: 0; list-style: none; }
+h1 { font-size: 25px; letter-spacing: -.03em; line-height: 1.15; font-weight: 750; }
+h2 { font-size: 15px; font-weight: 720; }
+
+/* ===== Vùng trạng thái tổng (Horror Vacui: 4 trạng thái khác nhau rõ) ===== */
+.hero-note { color: #7A828F; font-size: 12px; margin-top: 16px; }
+.skeleton { background: #E8EBED; border-radius: 4px; animation: pulse 1.4s ease-in-out infinite; }
+.skeleton-title { width: 62%; height: 24px; margin-top: 4px; }
+.skeleton-line { width: 100%; height: 12px; margin-top: 12px; }
+.skeleton-line.short { width: 45%; }
+.skeleton-block { width: 130px; height: 38px; margin-top: 18px; }
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .55; } }
+@media (prefers-reduced-motion: reduce) { .skeleton { animation: none; opacity: .7; } }
+
+.hero.is-error { border-color: #A5ACB8; background: #F2EDE7; }
+.hero.is-error h1 { margin-top: 12px; }
+.hero-glyph { width: 46px; height: 46px; border-radius: 5px; background: #FFFFFF; border: 1px solid #A5ACB8; color: #7A828F; display: grid; place-items: center; }
+.hero p { color: #5A626E; font-size: 13px; line-height: 1.6; margin-top: 9px; }
+.hero-sub { max-width: 430px; }
+.hero-actions { display: flex; gap: 8px; margin-top: 18px; }
+.action-note { margin-top: 14px; border-top: 1px solid #E8EBED; padding-top: 11px; font-size: 11px; line-height: 1.5; min-height: 27px; }
+.action-note:empty { display: none; }
+.note-ok { color: #414751; }
+.note-ok::before { content: "✓ "; font-weight: 800; }
+.note-fail { color: #8A5D47; font-weight: 650; }
+.note-idle { color: #7A828F; }
+
+/* ===== Nút: lồi, to, nút phải như nút (Thinginess, Extent) ===== */
+.button { border: 1px solid #A5ACB8; background: #FFFFFF; color: #414751; border-radius: 5px; min-height: 40px; padding: 9px 16px; cursor: pointer; font-size: 12px; font-weight: 700; box-shadow: 0 1px 0 #E8EBED; }
+.button:hover { background: #F2EDE7; }
+.button:active { box-shadow: none; }
+.button.primary { flex: 1; border-color: #232830; background: #B78E79; color: #FFFFFF; box-shadow: 0 1px 0 #8A5D47; }
+.button.primary:hover { background: #8A5D47; }
+.button:disabled { opacity: .55; cursor: default; box-shadow: none; }
+
+/* ===== Tabs: mặc định nhạt, tab đang chọn khác hẳn (NullHypothesis) ===== */
+.tabs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4px; margin-top: 18px; background: #E8EBED; border: 1px solid #D1D5D9; border-radius: 5px; padding: 3px; }
+.tab { min-height: 34px; border: 1px solid transparent; border-radius: 4px; background: transparent; color: #5A626E; font-size: 12px; font-weight: 650; cursor: pointer; white-space: nowrap; }
+.tab:hover { color: #232830; }
+.tab.selected { background: #FFFFFF; border-color: #D1D5D9; color: #232830; font-weight: 750; box-shadow: 0 1px 0 #E8EBED; }
+
+/* ===== Chỉ báo trạng thái: mã hóa kép = màu + hình + chữ (Redundancy) ===== */
+.state-pill { display: inline-flex; align-items: center; gap: 7px; border: 1px solid #D1D5D9; background: #FFFFFF; border-radius: 5px; padding: 7px 11px; font-size: 11px; font-weight: 700; color: #5A626E; }
+.state-pill svg { color: #7A828F; }
+.state-pill.is-running { color: #8A5D47; border-color: #B78E79; }
+.state-pill.is-running svg { animation: spin 1.2s linear infinite; color: #B78E79; }
+.state-pill.is-offline { color: #8A5D47; background: #F2EDE7; border-color: #B78E79; }
+@keyframes spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .state-pill.is-running svg { animation: none; } }
+
+.status { display: inline-flex; align-items: center; gap: 6px; border-radius: 4px; border: 1px solid transparent; padding: 3px 8px; font-size: 10px; font-weight: 750; letter-spacing: .04em; color: #5A626E; background: #E8EBED; }
+.status-shape { width: 7px; height: 7px; border-radius: 2px; background: #7A828F; }
+.status-completed { background: transparent; color: #232830; }
+.status-completed .status-shape { border-radius: 50%; background: #414751; }
+.status-failed { background: #F2EDE7; color: #8A5D47; border-color: #B78E79; }
+.status-failed .status-shape { background: #8A5D47; transform: rotate(45deg); }
+
+/* ===== Khối kết quả gần nhất: số liệu = tương phản cao nhất (Dynamic Range) ===== */
+.latest-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.latest-head time { color: #7A828F; font-size: 11px; }
+.facts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 16px; }
+.facts li { background: #F2EDE7; border: 1px solid #D1D5D9; border-radius: 5px; padding: 10px 12px; }
+.facts strong { display: block; font-size: 19px; font-weight: 780; letter-spacing: -.02em; color: #232830; }
+.facts span { display: block; color: #5A626E; font-size: 10px; font-weight: 650; margin-top: 3px; }
+
+/* Danh sách bước: khối gắn trong, cuộn được → viền chìm (Attachment) */
+.steps { margin-top: 16px; border: 1px solid #D1D5D9; border-radius: 5px; background: #F9F8F7; box-shadow: inset 0 1px 0 #E8EBED; padding: 4px 12px; max-height: 220px; overflow: auto; }
+.steps li { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-top: 1px solid #E8EBED; min-height: 41px; }
+.steps li:first-child { border-top: 0; }
+.step-name { color: #232830; font-size: 11px; font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+.step-counts { margin-left: auto; color: #5A626E; font-size: 10px; white-space: nowrap; }
+
+/* ===== Lịch sử: hàng gọn, chỉ nhấn trạng thái đặc biệt (Least Marking) ===== */
+.history { border: 1px solid #D1D5D9; border-radius: 5px; background: #F9F8F7; box-shadow: inset 0 1px 0 #E8EBED; padding: 4px 12px; max-height: 340px; overflow: auto; }
+.history-row { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-top: 1px solid #E8EBED; font-size: 11px; min-height: 41px; }
+.history-row:first-child { border-top: 0; }
+.run-id { color: #232830; font-weight: 750; flex: 0 0 auto; }
+.history-row time { margin-left: auto; color: #5A626E; white-space: nowrap; }
+
+/* ===== Trạng thái rỗng ===== */
+.blank { padding: 20px 0 12px; display: flex; flex-direction: column; align-items: center; text-align: center; }
+.blank p { color: #5A626E; font-size: 12px; margin-top: 6px; }
+
+.foot { color: #A5ACB8; font-size: 10px; font-weight: 650; letter-spacing: .08em; text-align: center; margin-top: 22px; }
+
+/* ===== Tab "Người thắng": tên = tương phản cao nhất (Dynamic Range) ===== */
+.winners-list { max-height: 420px; }
+.winner-row { flex-wrap: wrap; }
+.winner-name { color: #232830; font-size: 12px; font-weight: 750; flex: 0 0 auto; }
+.winner-meta { color: #7A828F; font-size: 10px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+.winner-row time { color: #A5ACB8; font-size: 10px; }
+
+/* ===== Dialog chúc mừng: lớp nổi trên nền mờ ===== */
+.overlay { position: fixed; inset: 0; background: rgba(35, 40, 48, .45); display: grid; place-items: center; padding: 20px; z-index: 10; }
+.dialog { background: #FFFFFF; border: 1px solid #D1D5D9; border-radius: 6px; box-shadow: 0 2px 0 rgba(35, 40, 48, .2); width: 100%; max-width: 400px; max-height: calc(100vh - 40px); overflow: auto; padding: 24px 22px 22px; text-align: center; }
+.dialog-badge { width: 48px; height: 48px; margin: 0 auto; border-radius: 50%; background: #B78E79; color: #FFFFFF; display: grid; place-items: center; }
+.dialog-title { font-size: 18px; font-weight: 750; letter-spacing: -.02em; margin-top: 12px; }
+.dialog-name { color: #8A5D47; font-size: 21px; font-weight: 780; letter-spacing: -.02em; margin-top: 4px; }
+.dialog-facts { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 16px; text-align: left; }
+.dialog-facts > div { background: #F2EDE7; border: 1px solid #D1D5D9; border-radius: 5px; padding: 9px 11px; min-width: 0; }
+.dialog-facts dt { color: #5A626E; font-size: 9px; font-weight: 700; letter-spacing: .08em; }
+.dialog-facts dd { margin: 3px 0 0; color: #232830; font-size: 11px; font-weight: 680; overflow-wrap: anywhere; }
+.dialog-list-wrap { margin-top: 16px; }
+.dialog-list-title { color: #5A626E; font-size: 10px; font-weight: 750; letter-spacing: .08em; text-align: left; margin-bottom: 7px; }
+.dialog-list { text-align: left; }
+.dialog-close { width: 100%; margin-top: 18px; }
+
+/* ===== Mobile ===== */
+@media (max-width: 480px) {
+  .facts { grid-template-columns: 1fr 1fr; }
+  .steps li { flex-wrap: wrap; }
+  .step-counts { width: 100%; margin-left: 0; padding-left: 2px; }
+}
