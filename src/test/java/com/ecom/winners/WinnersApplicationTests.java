@@ -6,7 +6,7 @@ import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.job.Job;
 import org.springframework.batch.core.job.JobExecution;
 import org.springframework.batch.core.launch.JobOperator;
-import org.springframework.batch.core.repository.explore.JobExplorer;
+import org.springframework.batch.core.repository.JobRepository;
 import com.ecom.winners.api.DashboardController;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -89,7 +89,7 @@ class WinnersApplicationTests {
     }
     @Test
     @DisplayName("Dashboard API and two consecutive job runs")
-    void dashboardAndRepeatedRuns(@Autowired JobOperator operator, @Autowired JobExplorer explorer) throws Exception {
+    void dashboardAndRepeatedRuns(@Autowired JobOperator operator, @Autowired JobRepository explorer) throws Exception {
         WebClient client = WebClient.create("http://localhost:" + port);
         DashboardController.Dashboard before = client.get().uri("/api/dashboard")
                 .retrieve().bodyToMono(DashboardController.Dashboard.class).block();

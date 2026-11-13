@@ -7,7 +7,7 @@ import com.ecom.winners.repositories.WinnerRepository;
 import org.springframework.batch.core.job.JobExecution;
 import org.springframework.batch.core.job.JobInstance;
 import org.springframework.batch.core.launch.JobOperator;
-import org.springframework.batch.core.repository.explore.JobExplorer;
+import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.StepExecution;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -29,7 +29,7 @@ import java.util.Properties;
 @RequestMapping("/api")
 public class DashboardController {
     private static final String JOB_NAME = "selectingWeeklyWinner";
-    private final JobExplorer explorer;
+    private final JobRepository explorer;
     private final JobOperator operator;
     private final UserRepository users;
     private final TransactionRepository transactions;
@@ -39,7 +39,7 @@ public class DashboardController {
     private final String csvPath;
     private final String source;
 
-    public DashboardController(JobExplorer explorer, JobOperator operator, UserRepository users,
+    public DashboardController(JobRepository explorer, JobOperator operator, UserRepository users,
                                TransactionRepository transactions, WinnerRepository winners,
                                @Value("${select.winner.amount.threshold}") String threshold,
                                @Value("${spring.kafka.template.default-topic}") String topic,
