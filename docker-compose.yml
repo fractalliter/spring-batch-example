@@ -1,12 +1,20 @@
-version: '3.8'
-
 services:
+  app:
+    build: .
+    environment:
+      PROFILE: prod
+    depends_on:
+      postgres:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+    restart: on-failure
   kafka:
     image: apache/kafka:4.3.1
     container_name: kafka
     ports:
-      - "9092:9092"
-      - "29092:29092"
+      - "127.0.0.1:9092:9092"
+      - "127.0.0.1:29092:29092"
     environment:
       KAFKA_NODE_ID: 1
       KAFKA_PROCESS_ROLES: broker,controller
@@ -37,7 +45,7 @@ services:
     image: postgres:17
     container_name: postgres
     ports:
-      - "5432:5432"
+      - "127.0.0.1:5432:5432"
     environment:
       POSTGRES_DB: transactions
       POSTGRES_USER: postgres
@@ -45,6 +53,7 @@ services:
       TZ: "Asia/Ho_Chi_Minh"
     volumes:
       - pgdata:/var/lib/postgresql/data
+      - ./docker/postgres/schema-batch.sql:/docker-entrypoint-initdb.d/schema-batch.sql:ro
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres -d transactions"]
       interval: 10s

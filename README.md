@@ -14,23 +14,23 @@ your machine. You can run the following command on the root of the project from 
 docker compose up
 ```
 
-It will download a PostgreSQL, Apache Kafka, [Apache Zookeeper](https://zookeeper.apache.org/) images, and create a
-contianer from them and also from
-project's [Dockerfile](https://github.com/fractalliter/jackpot-winner/blob/main/Dockerfile). Then It will deploy and
-orchestrate them on your machine.
+This starts PostgreSQL, Kafka (KRaft mode), and the application. The application
+uses Java 21 and the `prod` profile. The batch job does not run on startup; its
+scheduler runs every Sunday at 23:59. The first start initializes the database
+schema. PostgreSQL data is kept in the `pgdata` Docker volume. The Spring Batch
+tables are installed by PostgreSQL when this volume is first created; an older
+volume without those tables must be migrated before starting the app.
+
+For local development, start only the dependencies with
+`docker compose up -d postgres kafka`, then run
+`PROFILE=dev ./mvnw spring-boot:run` with Java 21.
 
 ## How to run tests
 
-Deploy an instance of Kafka, Zookeeper, and PostgreSQL database with following comman:
+The tests use H2 and embedded Kafka; no Docker services are required.
 
 ```bash
-docker compose up db kafka zookeeper
-```
-
-Then you can execute the test from command line with [Maven](https://maven.apache.org/):
-
-```bash
-mvn test
+./mvnw test
 ```
 
 ## Job -> LuckyWinnerJob
