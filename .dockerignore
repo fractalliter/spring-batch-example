@@ -1,4 +1,5 @@
 .git
+frontend
 .mvn
 target
 docs
