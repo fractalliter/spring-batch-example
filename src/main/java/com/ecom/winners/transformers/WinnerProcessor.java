@@ -8,7 +8,7 @@ import com.ecom.winners.entity.Address;
 import com.ecom.winners.entity.Company;
 import com.ecom.winners.entity.GeoLocation;
 import com.ecom.winners.entity.User;
-import org.springframework.batch.item.ItemProcessor;
+import org.springframework.batch.infrastructure.item.ItemProcessor;
 
 public class WinnerProcessor implements ItemProcessor<User, UserDTO> {
     @Override

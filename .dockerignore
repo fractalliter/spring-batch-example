@@ -1,0 +1,9 @@
+.git
+.env
+frontend
+.mvn
+target
+docs
+src/main/java*.bak
+src/main/resources.bak
+*.bak

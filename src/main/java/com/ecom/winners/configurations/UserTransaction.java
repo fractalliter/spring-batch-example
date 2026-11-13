@@ -2,19 +2,20 @@ package com.ecom.winners.configurations;
 
 import com.ecom.winners.dto.TransactionDTO;
 import com.ecom.winners.entity.Transaction;
+import com.ecom.winners.notifiers.ChunkLogListener;
 import com.ecom.winners.repositories.UserRepository;
 import com.ecom.winners.transformers.TransactionProcessor;
 import jakarta.persistence.EntityManagerFactory;
-import org.springframework.batch.core.Step;
+import org.springframework.batch.core.step.Step;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
-import org.springframework.batch.item.ItemProcessor;
-import org.springframework.batch.item.ItemWriter;
-import org.springframework.batch.item.database.JpaItemWriter;
-import org.springframework.batch.item.database.builder.JpaItemWriterBuilder;
-import org.springframework.batch.item.file.FlatFileItemReader;
-import org.springframework.batch.item.file.builder.FlatFileItemReaderBuilder;
-import org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper;
+import org.springframework.batch.infrastructure.item.ItemProcessor;
+import org.springframework.batch.infrastructure.item.ItemWriter;
+import org.springframework.batch.infrastructure.item.database.JpaItemWriter;
+import org.springframework.batch.infrastructure.item.database.builder.JpaItemWriterBuilder;
+import org.springframework.batch.infrastructure.item.file.FlatFileItemReader;
+import org.springframework.batch.infrastructure.item.file.builder.FlatFileItemReaderBuilder;
+import org.springframework.batch.infrastructure.item.file.mapping.BeanWrapperFieldSetMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -117,13 +118,18 @@ public class UserTransaction {
             PlatformTransactionManager transactionManager,
             JpaItemWriter<Transaction> transactionWriter,
             FlatFileItemReader<TransactionDTO> transactionReader,
+            ChunkLogListener chunkLogListener,
             @Value("${transaction.reader.chunk.size}") int chunkSize
     ) {
         return new StepBuilder("insertUserTransactions", jobRepository)
-                .<TransactionDTO, Transaction>chunk(chunkSize, transactionManager)
+                .<TransactionDTO, Transaction>chunk(chunkSize).transactionManager(transactionManager)
                 .reader(transactionReader)
                 .processor(transactionProcessor)
                 .writer(transactionWriter)
+                .faultTolerant()
+                .skip(Exception.class)
+                .skipLimit(10)
+                .listener(chunkLogListener)
                 .build();
     }
 

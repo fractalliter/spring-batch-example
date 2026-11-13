@@ -1,15 +1,15 @@
 package com.ecom.winners.readers;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Builder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.batch.item.ItemReader;
+import org.springframework.batch.infrastructure.item.ItemReader;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
+import tools.jackson.databind.ObjectMapper;
 
 import java.util.List;
 import java.util.Map;
@@ -43,6 +43,7 @@ public class RestApiItemReaderBuilder<T> implements ItemReader<List<T>> {
         if (endRead.test(page)) {
             return null;
         }
+        int currentPage = page;
         Flux<T> responseFlux = webClient.get()
                 .uri(
                         uriBuilder -> uriBuilder
@@ -56,6 +57,9 @@ public class RestApiItemReaderBuilder<T> implements ItemReader<List<T>> {
                 .onStatus(HttpStatusCode::isError, ClientResponse::createException)
                 .bodyToFlux(entity).cache();
         page += 1;
-        return responseFlux.collectList().block();
+        List<T> items = responseFlux.collectList().block();
+        log.info("Reader [{}] — GET {}?page={}&size={} → đọc {} mục", name, path, currentPage, size,
+                items == null ? 0 : items.size());
+        return items;
     }
 }

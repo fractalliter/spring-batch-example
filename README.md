@@ -7,30 +7,41 @@ which integrates with [Apache Kafka](https://kafka.apache.org/) and [PostgreSQL]
 
 ## How to run
 
-You need to have [docker](https://www.docker.com/) with [docker compose](https://docs.docker.com/compose/) installed on
-your machine. You can run the following command on the root of the project from command line:
+You need [Docker Compose](https://docs.docker.com/compose/) installed. Copy
+`.env.example` to `.env` and set a strong `DB_PASSWORD`. The `.env` file is
+ignored by Git and excluded from the Docker build context. From the project root:
 
 ```bash
+cp -n .env.example .env
+# Edit DB_PASSWORD in .env before starting.
 docker compose up
 ```
 
-It will download a PostgreSQL, Apache Kafka, [Apache Zookeeper](https://zookeeper.apache.org/) images, and create a
-contianer from them and also from
-project's [Dockerfile](https://github.com/fractalliter/jackpot-winner/blob/main/Dockerfile). Then It will deploy and
-orchestrate them on your machine.
+This starts PostgreSQL, Kafka (KRaft mode), and the application. The application
+uses Java 21 and the `prod` profile. The batch job does not run on startup; its
+scheduler runs every Sunday at 23:59. The first start initializes the database
+schema. PostgreSQL data is kept in the `pgdata` Docker volume. The Spring Batch
+tables are installed by PostgreSQL when this volume is first created; an older
+volume without those tables must be migrated before starting the app.
+
+For local development, start only the dependencies, export the values from
+`.env`, then run the app with Java 21:
+
+```bash
+docker compose up -d postgres kafka
+set -a; source .env; set +a
+PROFILE=dev ./mvnw spring-boot:run
+```
+
+`DB_HOST_PORT` and `KAFKA_EXTERNAL_HOST_PORT` are the ports used by the local
+app. Internal container ports are configured separately in `.env`.
 
 ## How to run tests
 
-Deploy an instance of Kafka, Zookeeper, and PostgreSQL database with following comman:
+The tests use H2 and embedded Kafka; no Docker services are required.
 
 ```bash
-docker compose up db kafka zookeeper
-```
-
-Then you can execute the test from command line with [Maven](https://maven.apache.org/):
-
-```bash
-mvn test
+./mvnw test
 ```
 
 ## Job -> LuckyWinnerJob
@@ -134,3 +145,24 @@ The Writer takes the UserDTO from the processor and publish it into a Kafka topi
 key is generated from hashcode of the winner. The message value is a JSON of UserDTO.
 
 >For more please read the **[documents](https://fractalliter.github.io/spring-batch-example/index.html)**
+
+## Dashboard và API
+
+Sao chép `.env.example` thành `.env`, đặt mật khẩu PostgreSQL, rồi chạy backend và hạ tầng bằng `docker compose up --build`. Backend chỉ mở trên `127.0.0.1:${APP_HOST_PORT}`; cổng trong container là `APP_PORT`. Lịch chạy mặc định là Chủ Nhật 23:59 theo `APP_TIME_ZONE`.
+
+Chạy giao diện ở máy host:
+
+```bash
+cd frontend
+pnpm install
+pnpm dev
+```
+
+Mở `http://localhost:5173` (hoặc cổng `FRONTEND_PORT` trong `.env`). Vite chuyển tiếp `/api` đến backend qua `APP_HOST_PORT`. Giao diện tự cập nhật thống kê và lịch sử mỗi 5 giây, và nút **Chạy job** gọi API để chạy thủ công.
+
+| Endpoint | Chức năng |
+| --- | --- |
+| `GET /api/dashboard` | Thống kê người dùng/giao dịch, cấu hình và 10 lần chạy gần nhất |
+| `POST /api/jobs/executions` (`Content-Type: application/json`, body `{}`) | Chạy job; trả về `executionId` |
+
+Metadata của Spring Batch được lưu trong các bảng `BATCH_*` của PostgreSQL. Khi dùng volume PostgreSQL cũ chưa có các bảng này, cần tạo schema từ `docker/postgres/schema-batch.sql` trước khi khởi động app. Nút chạy và API điều khiển job chỉ được mở trên localhost trong cấu hình Compose mặc định.

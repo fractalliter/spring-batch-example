@@ -1,0 +1,290 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 1800" width="100%" height="100%" style="background-color: #F9F8F7; font-family: system-ui, -apple-system, sans-serif;">
+  <defs>
+    <!-- Shadow cho các container -->
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="6" stdDeviation="12" flood-color="#414751" flood-opacity="0.08"/>
+    </filter>
+    <!-- Hiệu ứng bo góc cho các ô màu -->
+    <rect id="swatch" width="240" height="70" rx="12"/>
+  </defs>
+
+  <!-- Tiêu đề chính ở giữa -->
+  <text x="600" y="80" text-anchor="middle" font-size="36" font-weight="800" fill="#232830" letter-spacing="1">Design System - Earthy Palette</text>
+  <text x="600" y="115" text-anchor="middle" font-size="16" font-weight="500" fill="#7A828F">Hệ thống màu dựa trên ảnh: White, Almond, Azure Mist, Terracotta, Steel, Rosemary</text>
+
+  <!-- CONTAINER CHÍNH XẾP CHỒNG (STACK) -->
+  <g transform="translate(50, 160)">
+    
+    <!-- ================= ROW 1: PRIMARY ================= -->
+    <g transform="translate(0, 0)">
+      <rect width="1100" height="230" rx="20" fill="#FFFFFF" filter="url(#shadow)"/>
+      
+      <!-- Khối Trái (Xếp chồng: Title, Subtitle) -->
+      <g transform="translate(40, 40)">
+        <text x="0" y="0" font-size="24" font-weight="700" fill="#414751">Primary (Màu chủ đạo)</text>
+        <text x="0" y="35" font-size="15" font-weight="500" fill="#5A626E">
+          <tspan x="0" dy="0">Sử dụng màu "Steel" làm màu chủ đạo. Tạo cảm giác</tspan>
+          <tspan x="0" dy="22">vững chãi, chuyên nghiệp. Dùng cho thanh điều hướng,</tspan>
+          <tspan x="0" dy="22">nút bấm chính và các thành phần cốt lõi.</tspan>
+        </text>
+      </g>
+      
+      <!-- Khối Phải (Grid 2x2 4 trọng số) -->
+      <g transform="translate(550, 40)">
+        <!-- Hàng 1 -->
+        <g transform="translate(0, 0)">
+          <rect width="240" height="65" rx="8" fill="#E8EAED" stroke="#D1D5D9" stroke-width="1"/>
+          <text x="120" y="38" text-anchor="middle" font-size="14" font-weight="600" fill="#414751">#E8EAED (100)</text>
+        </g>
+        <g transform="translate(260, 0)">
+          <rect width="240" height="65" rx="8" fill="#A5ACB8" stroke="#7A828F" stroke-width="1"/>
+          <text x="120" y="38" text-anchor="middle" font-size="14" font-weight="600" fill="#FFFFFF">#A5ACB8 (300)</text>
+        </g>
+        <!-- Hàng 2 -->
+        <g transform="translate(0, 85)">
+          <rect width="240" height="65" rx="8" fill="#414751" stroke="#5A626E" stroke-width="1"/>
+          <text x="120" y="38" text-anchor="middle" font-size="14" font-weight="600" fill="#FFFFFF">#414751 (500 - Base)</text>
+        </g>
+        <g transform="translate(260, 85)">
+          <rect width="240" height="65" rx="8" fill="#232830" stroke="#1A1E24" stroke-width="1"/>
+          <text x="120" y="38" text-anchor="middle" font-size="14" font-weight="600" fill="#FFFFFF">#232830 (700)</text>
+        </g>
+      </g>
+    </g>
+
+    <!-- ================= ROW 2: ACCENT (Hot & Cool) ================= -->
+    <g transform="translate(0, 260)">
+      <rect width="1100" height="230" rx="20" fill="#FFFFFF" filter="url(#shadow)"/>
+      
+      <!-- Khối Trái -->
+      <g transform="translate(40, 40)">
+        <text x="0" y="0" font-size="24" font-weight="700" fill="#B78E79">Accent (Màu nhấn mạnh)</text>
+        <text x="0" y="35" font-size="15" font-weight="500" fill="#5A626E">
+          <tspan x="0" dy="0">Màu "Terracotta" (Hot Accent) nổi bật trên nền trung tính.</tspan>
+          <tspan x="0" dy="22">Đi kèm là biến thể "Cool Accent" đối lập để tạo sự</tspan>
+          <tspan x="0" dy="22">cân bằng. Dùng cho nút Call-to-Action, thẻ (badges).</tspan>
+        </text>
+      </g>
+      
+      <!-- Khối Phải (Grid 2x2 cho Hot Accent và 2x2 cho Cool Accent) -->
+      <g transform="translate(500, 40)">
+        <!-- Nhóm Hot Accent -->
+        <g transform="translate(0, 0)">
+          <text x="0" y="15" font-size="12" font-weight="700" fill="#B78E79" letter-spacing="1">HOT ACCENT (BASE)</text>
+          <!-- Hàng 1 -->
+          <g transform="translate(0, 25)">
+            <rect width="115" height="60" rx="8" fill="#F4EDE9" stroke="#E8D7CE" stroke-width="1"/>
+            <text x="57" y="35" text-anchor="middle" font-size="12" font-weight="600" fill="#B78E79">100</text>
+          </g>
+          <g transform="translate(125, 25)">
+            <rect width="115" height="60" rx="8" fill="#D8BBAF" stroke="#C4A08F" stroke-width="1"/>
+            <text x="57" y="35" text-anchor="middle" font-size="12" font-weight="600" fill="#FFFFFF">300</text>
+          </g>
+          <!-- Hàng 2 -->
+          <g transform="translate(0, 95)">
+            <rect width="115" height="60" rx="8" fill="#B78E79" stroke="#9F7661" stroke-width="1"/>
+            <text x="57" y="35" text-anchor="middle" font-size="12" font-weight="600" fill="#FFFFFF">500</text>
+          </g>
+          <g transform="translate(125, 95)">
+            <rect width="115" height="60" rx="8" fill="#8A5D47" stroke="#6E4633" stroke-width="1"/>
+            <text x="57" y="35" text-anchor="middle" font-size="12" font-weight="600" fill="#FFFFFF">700</text>
+          </g>
+        </g>
+        
+        <!-- Nhóm Cool Accent Variant -->
+        <g transform="translate(270, 0)">
+          <text x="0" y="15" font-size="12" font-weight="700" fill="#6A8A9E" letter-spacing="1">COOL ACCENT (VARIANT)</text>
+          <!-- Hàng 1 -->
+          <g transform="translate(0, 25)">
+            <rect width="115" height="60" rx="8" fill="#EBF0F3" stroke="#D1DFE6" stroke-width="1"/>
+            <text x="57" y="35" text-anchor="middle" font-size="12" font-weight="600" fill="#6A8A9E">100</text>
+          </g>
+          <g transform="translate(125, 25)">
+            <rect width="115" height="60" rx="8" fill="#A9C0CE" stroke="#8DA9BA" stroke-width="1"/>
+            <text x="57" y="35" text-anchor="middle" font-size="12" font-weight="600" fill="#FFFFFF">300</text>
+          </g>
+          <!-- Hàng 2 -->
+          <g transform="translate(0, 95)">
+            <rect width="115" height="60" rx="8" fill="#6A8A9E" stroke="#527285" stroke-width="1"/>
+            <text x="57" y="35" text-anchor="middle" font-size="12" font-weight="600" fill="#FFFFFF">500</text>
+          </g>
+          <g transform="translate(125, 95)">
+            <rect width="115" height="60" rx="8" fill="#456071" stroke="#324A58" stroke-width="1"/>
+            <text x="57" y="35" text-anchor="middle" font-size="12" font-weight="600" fill="#FFFFFF">700</text>
+          </g>
+        </g>
+      </g>
+    </g>
+
+    <!-- ================= ROW 3: NEUTRAL (10 bậc, 5x2) ================= -->
+    <g transform="translate(0, 520)">
+      <rect width="1100" height="310" rx="20" fill="#FFFFFF" filter="url(#shadow)"/>
+      
+      <!-- Khối Trái -->
+      <g transform="translate(40, 40)">
+        <text x="0" y="0" font-size="24" font-weight="700" fill="#414751">Neutral (Màu trung tính)</text>
+        <text x="0" y="35" font-size="15" font-weight="500" fill="#5A626E">
+          <tspan x="0" dy="0">Sự kết hợp của White, Almond, Azure Mist và Steel.</tspan>
+          <tspan x="0" dy="22">Cung cấp 10 cấp độ từ sáng nhất đến tối nhất.</tspan>
+          <tspan x="0" dy="22">Dùng cho nền (background), văn bản (text), và viền.</tspan>
+        </text>
+      </g>
+      
+      <!-- Khối Phải (Grid 5x2) -->
+      <g transform="translate(420, 40)">
+        <!-- Hàng 1 -->
+        <g transform="translate(0, 0)">
+          <rect width="110" height="100" rx="8" fill="#FFFFFF" stroke="#E8EBED" stroke-width="1"/>
+          <text x="55" y="40" text-anchor="middle" font-size="13" font-weight="700" fill="#414751">50</text>
+          <text x="55" y="65" text-anchor="middle" font-size="11" font-weight="500" fill="#7A828F">#FFFFFF</text>
+        </g>
+        <g transform="translate(122, 0)">
+          <rect width="110" height="100" rx="8" fill="#F9F8F7" stroke="#E8EBED" stroke-width="1"/>
+          <text x="55" y="40" text-anchor="middle" font-size="13" font-weight="700" fill="#414751">100</text>
+          <text x="55" y="65" text-anchor="middle" font-size="11" font-weight="500" fill="#7A828F">#F9F8F7</text>
+        </g>
+        <g transform="translate(244, 0)">
+          <rect width="110" height="100" rx="8" fill="#F2EDE7" stroke="#E8EBED" stroke-width="1"/>
+          <text x="55" y="40" text-anchor="middle" font-size="13" font-weight="700" fill="#414751">200</text>
+          <text x="55" y="65" text-anchor="middle" font-size="11" font-weight="500" fill="#7A828F">#F2EDE7</text>
+        </g>
+        <g transform="translate(366, 0)">
+          <rect width="110" height="100" rx="8" fill="#E8EBED" stroke="#D1D5D9" stroke-width="1"/>
+          <text x="55" y="40" text-anchor="middle" font-size="13" font-weight="700" fill="#414751">300</text>
+          <text x="55" y="65" text-anchor="middle" font-size="11" font-weight="500" fill="#7A828F">#E8EBED</text>
+        </g>
+        <g transform="translate(488, 0)">
+          <rect width="110" height="100" rx="8" fill="#D1D5D9" stroke="#A5ACB8" stroke-width="1"/>
+          <text x="55" y="40" text-anchor="middle" font-size="13" font-weight="700" fill="#414751">400</text>
+          <text x="55" y="65" text-anchor="middle" font-size="11" font-weight="500" fill="#5A626E">#D1D5D9</text>
+        </g>
+        <!-- Hàng 2 -->
+        <g transform="translate(0, 115)">
+          <rect width="110" height="100" rx="8" fill="#A5ACB8" stroke="#7A828F" stroke-width="1"/>
+          <text x="55" y="40" text-anchor="middle" font-size="13" font-weight="700" fill="#FFFFFF">500</text>
+          <text x="55" y="65" text-anchor="middle" font-size="11" font-weight="500" fill="#FFFFFF">#A5ACB8</text>
+        </g>
+        <g transform="translate(122, 115)">
+          <rect width="110" height="100" rx="8" fill="#7A828F" stroke="#5A626E" stroke-width="1"/>
+          <text x="55" y="40" text-anchor="middle" font-size="13" font-weight="700" fill="#FFFFFF">600</text>
+          <text x="55" y="65" text-anchor="middle" font-size="11" font-weight="500" fill="#FFFFFF">#7A828F</text>
+        </g>
+        <g transform="translate(244, 115)">
+          <rect width="110" height="100" rx="8" fill="#5A626E" stroke="#414751" stroke-width="1"/>
+          <text x="55" y="40" text-anchor="middle" font-size="13" font-weight="700" fill="#FFFFFF">700</text>
+          <text x="55" y="65" text-anchor="middle" font-size="11" font-weight="500" fill="#FFFFFF">#5A626E</text>
+        </g>
+        <g transform="translate(366, 115)">
+          <rect width="110" height="100" rx="8" fill="#414751" stroke="#232830" stroke-width="1"/>
+          <text x="55" y="40" text-anchor="middle" font-size="13" font-weight="700" fill="#FFFFFF">800</text>
+          <text x="55" y="65" text-anchor="middle" font-size="11" font-weight="500" fill="#FFFFFF">#414751</text>
+        </g>
+        <g transform="translate(488, 115)">
+          <rect width="110" height="100" rx="8" fill="#232830" stroke="#1A1E24" stroke-width="1"/>
+          <text x="55" y="40" text-anchor="middle" font-size="13" font-weight="700" fill="#FFFFFF">900</text>
+          <text x="55" y="65" text-anchor="middle" font-size="11" font-weight="500" fill="#FFFFFF">#232830</text>
+        </g>
+      </g>
+    </g>
+
+    <!-- ================= ROW 4: SUCCESS ================= -->
+    <g transform="translate(0, 860)">
+      <rect width="1100" height="230" rx="20" fill="#FFFFFF" filter="url(#shadow)"/>
+      
+      <g transform="translate(40, 40)">
+        <text x="0" y="0" font-size="24" font-weight="700" fill="#919F90">Success (Thành công)</text>
+        <text x="0" y="35" font-size="15" font-weight="500" fill="#5A626E">
+          <tspan x="0" dy="0">Sử dụng màu "Rosemary" tự nhiên. Dùng cho trạng thái</tspan>
+          <tspan x="0" dy="22">hoàn thành, thông báo tích cực, biểu tượng check,</tspan>
+          <tspan x="0" dy="22">và thanh tiến trình (progress bar).</tspan>
+        </text>
+      </g>
+      
+      <g transform="translate(550, 40)">
+        <g transform="translate(0, 0)">
+          <rect width="240" height="65" rx="8" fill="#EEF1EE" stroke="#DCE3DC" stroke-width="1"/>
+          <text x="120" y="38" text-anchor="middle" font-size="14" font-weight="600" fill="#667364">#EEF1EE (100)</text>
+        </g>
+        <g transform="translate(260, 0)">
+          <rect width="240" height="65" rx="8" fill="#C2CBC1" stroke="#A9B5A8" stroke-width="1"/>
+          <text x="120" y="38" text-anchor="middle" font-size="14" font-weight="600" fill="#FFFFFF">#C2CBC1 (300)</text>
+        </g>
+        <g transform="translate(0, 85)">
+          <rect width="240" height="65" rx="8" fill="#919F90" stroke="#768575" stroke-width="1"/>
+          <text x="120" y="38" text-anchor="middle" font-size="14" font-weight="600" fill="#FFFFFF">#919F90 (500 - Base)</text>
+        </g>
+        <g transform="translate(260, 85)">
+          <rect width="240" height="65" rx="8" fill="#667364" stroke="#4E5950" stroke-width="1"/>
+          <text x="120" y="38" text-anchor="middle" font-size="14" font-weight="600" fill="#FFFFFF">#667364 (700)</text>
+        </g>
+      </g>
+    </g>
+
+    <!-- ================= ROW 5: WARNING ================= -->
+    <g transform="translate(0, 1120)">
+      <rect width="1100" height="230" rx="20" fill="#FFFFFF" filter="url(#shadow)"/>
+      
+      <g transform="translate(40, 40)">
+        <text x="0" y="0" font-size="24" font-weight="700" fill="#E6B450">Warning (Cảnh báo)</text>
+        <text x="0" y="35" font-size="15" font-weight="500" fill="#5A626E">
+          <tspan x="0" dy="0">Màu vàng đất ấm áp phái sinh từ Terracotta. Dùng cho</tspan>
+          <tspan x="0" dy="22">các thông báo cần sự chú ý nhẹ, cảnh báo cần xác nhận</tspan>
+          <tspan x="0" dy="22">nhưng chưa đến mức nguy hiểm.</tspan>
+        </text>
+      </g>
+      
+      <g transform="translate(550, 40)">
+        <g transform="translate(0, 0)">
+          <rect width="240" height="65" rx="8" fill="#FEF7E7" stroke="#FDEDCB" stroke-width="1"/>
+          <text x="120" y="38" text-anchor="middle" font-size="14" font-weight="600" fill="#A67A22">#FEF7E7 (100)</text>
+        </g>
+        <g transform="translate(260, 0)">
+          <rect width="240" height="65" rx="8" fill="#F7D99E" stroke="#F0C673" stroke-width="1"/>
+          <text x="120" y="38" text-anchor="middle" font-size="14" font-weight="600" fill="#FFFFFF">#F7D99E (300)</text>
+        </g>
+        <g transform="translate(0, 85)">
+          <rect width="240" height="65" rx="8" fill="#E6B450" stroke="#D19B32" stroke-width="1"/>
+          <text x="120" y="38" text-anchor="middle" font-size="14" font-weight="600" fill="#FFFFFF">#E6B450 (500 - Base)</text>
+        </g>
+        <g transform="translate(260, 85)">
+          <rect width="240" height="65" rx="8" fill="#A67A22" stroke="#865E14" stroke-width="1"/>
+          <text x="120" y="38" text-anchor="middle" font-size="14" font-weight="600" fill="#FFFFFF">#A67A22 (700)</text>
+        </g>
+      </g>
+    </g>
+
+    <!-- ================= ROW 6: DESTROY ================= -->
+    <g transform="translate(0, 1380)">
+      <rect width="1100" height="230" rx="20" fill="#FFFFFF" filter="url(#shadow)"/>
+      
+      <g transform="translate(40, 40)">
+        <text x="0" y="0" font-size="24" font-weight="700" fill="#B45454">Destroy (Nguy hiểm / Lỗi)</text>
+        <text x="0" y="35" font-size="15" font-weight="500" fill="#5A626E">
+          <tspan x="0" dy="0">Màu đỏ đất sẫm, đậm đặc và nghiêm trọng. Dùng cho</tspan>
+          <tspan x="0" dy="22">hành động xóa (delete), lỗi hệ thống, hoặc cảnh báo</tspan>
+          <tspan x="0" dy="22">rủi ro mất dữ liệu.</tspan>
+        </text>
+      </g>
+      
+      <g transform="translate(550, 40)">
+        <g transform="translate(0, 0)">
+          <rect width="240" height="65" rx="8" fill="#F7ECEC" stroke="#EED4D4" stroke-width="1"/>
+          <text x="120" y="38" text-anchor="middle" font-size="14" font-weight="600" fill="#7D2E2E">#F7ECEC (100)</text>
+        </g>
+        <g transform="translate(260, 0)">
+          <rect width="240" height="65" rx="8" fill="#DDA3A3" stroke="#D08787" stroke-width="1"/>
+          <text x="120" y="38" text-anchor="middle" font-size="14" font-weight="600" fill="#FFFFFF">#DDA3A3 (300)</text>
+        </g>
+        <g transform="translate(0, 85)">
+          <rect width="240" height="65" rx="8" fill="#B45454" stroke="#993B3B" stroke-width="1"/>
+          <text x="120" y="38" text-anchor="middle" font-size="14" font-weight="600" fill="#FFFFFF">#B45454 (500 - Base)</text>
+        </g>
+        <g transform="translate(260, 85)">
+          <rect width="240" height="65" rx="8" fill="#7D2E2E" stroke="#612020" stroke-width="1"/>
+          <text x="120" y="38" text-anchor="middle" font-size="14" font-weight="600" fill="#FFFFFF">#7D2E2E (700)</text>
+        </g>
+      </g>
+    </g>
+
+  </g>
+</svg>
