@@ -37,7 +37,7 @@ public class JobScheduler {
      * Trigger job mỗi Chủ Nhật 23:59:00.
      * Dùng {@link JobOperator#start(String, Properties)} — API chính trong Spring Batch 6.
      */
-    @Scheduled(cron = "0 59 23 * * SUN")
+    @Scheduled(cron = "0 59 23 * * SUN", zone = "${APP_TIME_ZONE:Asia/Ho_Chi_Minh}")
     public void runSelectingWeeklyWinnerJob() throws Exception {
         logger.info("Triggering selectingWeeklyWinner job...");
         Properties params = new Properties();

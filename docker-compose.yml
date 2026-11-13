@@ -1,8 +1,13 @@
 services:
   app:
     build: .
+    ports:
+      - "127.0.0.1:${APP_HOST_PORT:?Set APP_HOST_PORT in .env}:${APP_PORT:?Set APP_PORT in .env}"
     environment:
       PROFILE: prod
+      APP_PORT: ${APP_PORT:?Set APP_PORT in .env}
+      APP_TIME_ZONE: ${APP_TIME_ZONE:?Set APP_TIME_ZONE in .env}
+      TZ: ${APP_TIME_ZONE:?Set APP_TIME_ZONE in .env}
       DB_HOST: postgres
       DB_PORT: ${DB_PORT:?Set DB_PORT in .env}
       DB_NAME: ${DB_NAME:?Set DB_NAME in .env}
