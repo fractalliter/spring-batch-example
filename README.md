@@ -7,10 +7,13 @@ which integrates with [Apache Kafka](https://kafka.apache.org/) and [PostgreSQL]
 
 ## How to run
 
-You need to have [docker](https://www.docker.com/) with [docker compose](https://docs.docker.com/compose/) installed on
-your machine. You can run the following command on the root of the project from command line:
+You need [Docker Compose](https://docs.docker.com/compose/) installed. Copy
+`.env.example` to `.env` and set a strong `DB_PASSWORD`. The `.env` file is
+ignored by Git and excluded from the Docker build context. From the project root:
 
 ```bash
+cp -n .env.example .env
+# Edit DB_PASSWORD in .env before starting.
 docker compose up
 ```
 
@@ -21,9 +24,17 @@ schema. PostgreSQL data is kept in the `pgdata` Docker volume. The Spring Batch
 tables are installed by PostgreSQL when this volume is first created; an older
 volume without those tables must be migrated before starting the app.
 
-For local development, start only the dependencies with
-`docker compose up -d postgres kafka`, then run
-`PROFILE=dev ./mvnw spring-boot:run` with Java 21.
+For local development, start only the dependencies, export the values from
+`.env`, then run the app with Java 21:
+
+```bash
+docker compose up -d postgres kafka
+set -a; source .env; set +a
+PROFILE=dev ./mvnw spring-boot:run
+```
+
+`DB_HOST_PORT` and `KAFKA_EXTERNAL_HOST_PORT` are the ports used by the local
+app. Internal container ports are configured separately in `.env`.
 
 ## How to run tests
 

@@ -3,6 +3,12 @@ services:
     build: .
     environment:
       PROFILE: prod
+      DB_HOST: postgres
+      DB_PORT: ${DB_PORT:?Set DB_PORT in .env}
+      DB_NAME: ${DB_NAME:?Set DB_NAME in .env}
+      DB_USER: ${DB_USER:?Set DB_USER in .env}
+      DB_PASSWORD: ${DB_PASSWORD:?Set DB_PASSWORD in .env}
+      KAFKA_BOOTSTRAP_SERVERS: kafka:${KAFKA_INTERNAL_PORT:?Set KAFKA_INTERNAL_PORT in .env}
     depends_on:
       postgres:
         condition: service_healthy
@@ -13,19 +19,19 @@ services:
     image: apache/kafka:4.3.1
     container_name: kafka
     ports:
-      - "127.0.0.1:9092:9092"
-      - "127.0.0.1:29092:29092"
+      - "127.0.0.1:${KAFKA_HOST_PORT:?Set KAFKA_HOST_PORT in .env}:${KAFKA_INTERNAL_PORT:?Set KAFKA_INTERNAL_PORT in .env}"
+      - "127.0.0.1:${KAFKA_EXTERNAL_HOST_PORT:?Set KAFKA_EXTERNAL_HOST_PORT in .env}:${KAFKA_EXTERNAL_PORT:?Set KAFKA_EXTERNAL_PORT in .env}"
     environment:
       KAFKA_NODE_ID: 1
       KAFKA_PROCESS_ROLES: broker,controller
 
-      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,EXTERNAL://0.0.0.0:29092,CONTROLLER://0.0.0.0:9093
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,EXTERNAL://localhost:29092
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:${KAFKA_INTERNAL_PORT},EXTERNAL://0.0.0.0:${KAFKA_EXTERNAL_PORT},CONTROLLER://0.0.0.0:${KAFKA_CONTROLLER_PORT:?Set KAFKA_CONTROLLER_PORT in .env}
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:${KAFKA_INTERNAL_PORT},EXTERNAL://localhost:${KAFKA_EXTERNAL_HOST_PORT}
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,EXTERNAL:PLAINTEXT,CONTROLLER:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
 
-      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:9093
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:${KAFKA_CONTROLLER_PORT}
 
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
@@ -35,7 +41,7 @@ services:
       KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
       CLUSTER_ID: "MkU3OEVBNTcwNTJENDM2Qg"
     healthcheck:
-      test: ["CMD-SHELL", "/opt/kafka/bin/kafka-broker-api-versions.sh --bootstrap-server localhost:9092 > /dev/null 2>&1"]
+      test: ["CMD-SHELL", "/opt/kafka/bin/kafka-broker-api-versions.sh --bootstrap-server localhost:${KAFKA_INTERNAL_PORT} > /dev/null 2>&1"]
       interval: 10s
       timeout: 10s
       retries: 5
@@ -44,18 +50,20 @@ services:
   postgres:
     image: postgres:17
     container_name: postgres
+    command: ["postgres", "-c", "port=${DB_PORT:?Set DB_PORT in .env}"]
     ports:
-      - "127.0.0.1:5432:5432"
+      - "127.0.0.1:${DB_HOST_PORT:?Set DB_HOST_PORT in .env}:${DB_PORT:?Set DB_PORT in .env}"
     environment:
-      POSTGRES_DB: transactions
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      PGPORT: ${DB_PORT}
       TZ: "Asia/Ho_Chi_Minh"
     volumes:
       - pgdata:/var/lib/postgresql/data
       - ./docker/postgres/schema-batch.sql:/docker-entrypoint-initdb.d/schema-batch.sql:ro
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d transactions"]
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB -p $$PGPORT"]
       interval: 10s
       timeout: 5s
       retries: 5
