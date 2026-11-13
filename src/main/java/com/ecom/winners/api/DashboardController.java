@@ -1,6 +1,7 @@
 package com.ecom.winners.api;
 
 import com.ecom.winners.entity.Winner;
+import com.ecom.winners.logging.StepLogCapture;
 import com.ecom.winners.repositories.TransactionRepository;
 import com.ecom.winners.repositories.UserRepository;
 import com.ecom.winners.repositories.WinnerRepository;
@@ -11,11 +12,15 @@ import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.StepExecution;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.codec.ServerSentEvent;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
@@ -34,6 +39,7 @@ public class DashboardController {
     private final UserRepository users;
     private final TransactionRepository transactions;
     private final WinnerRepository winners;
+    private final StepLogCapture logCapture;
     private final String threshold;
     private final String topic;
     private final String csvPath;
@@ -41,6 +47,7 @@ public class DashboardController {
 
     public DashboardController(JobRepository explorer, JobOperator operator, UserRepository users,
                                TransactionRepository transactions, WinnerRepository winners,
+                               StepLogCapture logCapture,
                                @Value("${select.winner.amount.threshold}") String threshold,
                                @Value("${spring.kafka.template.default-topic}") String topic,
                                @Value("${transaction.reader.resource.path}") String csvPath,
@@ -50,6 +57,7 @@ public class DashboardController {
         this.users = users;
         this.transactions = transactions;
         this.winners = winners;
+        this.logCapture = logCapture;
         this.threshold = threshold;
         this.topic = topic;
         this.csvPath = csvPath;
@@ -66,6 +74,21 @@ public class DashboardController {
         return Mono.fromCallable(() -> winners.findTop10ByOrderByWonAtDesc().stream()
                         .map(WinnerView::of).toList())
                 .subscribeOn(Schedulers.boundedElastic());
+    }
+
+    /**
+     * Stream log thời gian thực dưới dạng SSE.
+     *
+     * @param step nếu có, chỉ trả các dòng log thuộc step đó (vd. fetchUserData);
+     *             bỏ trống để nhận toàn bộ log. Subscriber mới nhận ngay tối đa
+     *             1000 dòng gần nhất trước khi nhận log trực tiếp.
+     */
+    @GetMapping(path = "/logs/stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    public Flux<ServerSentEvent<String>> logs(@RequestParam(required = false) String step) {
+        return logCapture.lines()
+                .filter(line -> step == null || step.isBlank() || step.equals(line.step()))
+                .map(line -> ServerSentEvent.builder(
+                        line.time() + " " + line.level() + " " + line.message()).build());
     }
 
     @PostMapping(path = "/jobs/executions", consumes = "application/json")

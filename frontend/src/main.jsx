@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { createRoot } from 'react-dom/client'
 import './style.css'
 
@@ -37,6 +37,7 @@ function App() {
   const [tab, setTab] = useState('week')
   const [winners, setWinners] = useState([])
   const [celebrate, setCelebrate] = useState(null)
+  const [logStep, setLogStep] = useState(null)
   const seenWinner = { current: undefined }
 
   async function refresh() {
@@ -75,6 +76,13 @@ function App() {
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
   }, [celebrate])
+
+  useEffect(() => {
+    if (!logStep) return
+    const onKey = (event) => { if (event.key === 'Escape') setLogStep(null) }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [logStep])
 
   async function startJob() {
     setAction({ busy: true, message: 'Đang gửi yêu cầu…', ok: false })
@@ -183,9 +191,12 @@ function App() {
               </ul>
               <ol className="steps">
                 {latest.steps.map((step) => <li key={step.name}>
-                  <span className="step-name">{step.name}</span>
-                  <span className={`status status-${step.status.toLowerCase()}`}><i className="status-shape" aria-hidden="true"/>{step.status === 'COMPLETED' ? 'xong' : step.status === 'FAILED' ? 'lỗi' : 'đang chạy'}</span>
-                  <span className="step-counts">đọc {step.readCount} · ghi {step.writeCount}{step.skipCount > 0 ? ` · bỏ qua ${step.skipCount}` : ''}</span>
+                  <button type="button" className="step-open" onClick={() => setLogStep(step.name)}
+                    title={`Xem log của ${step.name}`}>
+                    <span className="step-name">{step.name}</span>
+                    <span className={`status status-${step.status.toLowerCase()}`}><i className="status-shape" aria-hidden="true"/>{step.status === 'COMPLETED' ? 'xong' : step.status === 'FAILED' ? 'lỗi' : 'đang chạy'}</span>
+                    <span className="step-counts">đọc {step.readCount} · ghi {step.writeCount}{step.skipCount > 0 ? ` · bỏ qua ${step.skipCount}` : ''}</span>
+                  </button>
                 </li>)}
               </ol>
             </div>
@@ -214,6 +225,8 @@ function App() {
 
       <footer className="foot">Spring Batch · PostgreSQL · Kafka</footer>
     </main>
+
+    {logStep && <LogStream step={logStep} onClose={() => setLogStep(null)} />}
 
     {celebrate && <div className="overlay" onClick={() => setCelebrate(null)}>
       <div className="dialog" role="dialog" aria-modal="true" aria-label="Chúc mừng người thắng"
@@ -247,3 +260,42 @@ function App() {
 }
 
 createRoot(document.getElementById('root')).render(<App />)
+
+// ===== Panel stream log theo step: nguồn sự kiện /api/logs/stream?step=… =====
+function LogStream({ step, onClose }) {
+  const [lines, setLines] = useState([])
+  const [connected, setConnected] = useState(false)
+  const boxRef = useRef(null)
+
+  useEffect(() => {
+    const source = new EventSource(`/api/logs/stream?step=${encodeURIComponent(step)}`)
+    source.onopen = () => setConnected(true)
+    source.onmessage = (event) => setLines((prev) => [...prev.slice(-400), event.data])
+    source.onerror = () => setConnected(false)
+    return () => source.close()
+  }, [step])
+
+  useEffect(() => {
+    if (boxRef.current) boxRef.current.scrollTop = boxRef.current.scrollHeight
+  }, [lines])
+
+  return <div className="overlay" onClick={onClose}>
+    <div className="dialog log-dialog" role="dialog" aria-modal="true" aria-label={`Log của ${step}`}
+      onClick={(event) => event.stopPropagation()}>
+      <div className="log-head">
+        <div className="log-title">
+          <span className="log-step">{step}</span>
+          <span className={`log-live ${connected ? 'on' : ''}`} aria-hidden="true"/>
+          <span className="log-live-label">{connected ? 'trực tiếp' : 'mất kết nối'}</span>
+        </div>
+        <p className="log-note">Log từ máy chủ, lọc theo step · nhấn Esc để đóng</p>
+      </div>
+      <pre className="log-box" ref={boxRef}>
+        {lines.length === 0
+          ? <span className="log-empty">Đang chờ log của {step}… Hãy chạy job để thấy dòng mới.</span>
+          : lines.map((line, index) => <span key={index} className="log-line">{line}</span>)}
+      </pre>
+      <button type="button" className="button primary dialog-close" autoFocus onClick={onClose}>Đóng</button>
+    </div>
+  </div>
+}

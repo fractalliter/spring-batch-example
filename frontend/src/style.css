@@ -109,6 +109,25 @@ h2 { font-size: 15px; font-weight: 720; }
 .step-name { color: #232830; font-size: 11px; font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
 .step-counts { margin-left: auto; color: #5A626E; font-size: 10px; white-space: nowrap; }
 
+/* Step hàng bấm được: mở panel log (Liberty: bấm vào là xem được) */
+.step-open { display: flex; align-items: center; gap: 10px; width: 100%; background: none; border: 0; padding: 0; cursor: pointer; text-align: left; border-radius: 4px; }
+.step-open:hover .step-name { text-decoration: underline; text-underline-offset: 2px; }
+.step-open:focus-visible { outline: 2px solid #6A8A9E; outline-offset: 3px; }
+
+/* ===== Panel log stream: nền tối để dòng log nổi bật ===== */
+.log-dialog { text-align: left; max-width: 560px; }
+.log-head { display: flex; flex-direction: column; gap: 4px; }
+.log-title { display: flex; align-items: center; gap: 8px; }
+.log-step { font-size: 14px; font-weight: 750; color: #232830; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+.log-live { width: 8px; height: 8px; border-radius: 50%; background: #D1D5D9; }
+.log-live.on { background: #8A5D47; }
+.log-live-label { color: #7A828F; font-size: 10px; font-weight: 650; letter-spacing: .04em; }
+.log-note { color: #7A828F; font-size: 10px; margin-top: 2px; }
+.log-box { margin: 12px 0 0; border: 1px solid #D1D5D9; border-radius: 5px; background: #232830; color: #E8EBED; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 10.5px; line-height: 1.7; height: 320px; overflow: auto; padding: 12px 14px; white-space: pre-wrap; overflow-wrap: anywhere; }
+.log-line { display: block; }
+.log-line::after { content: ""; }
+.log-empty { color: #7A828F; font-style: italic; }
+
 /* ===== Lịch sử: hàng gọn, chỉ nhấn trạng thái đặc biệt (Least Marking) ===== */
 .history { border: 1px solid #D1D5D9; border-radius: 5px; background: #F9F8F7; box-shadow: inset 0 1px 0 #E8EBED; padding: 4px 12px; max-height: 340px; overflow: auto; }
 .history-row { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-top: 1px solid #E8EBED; font-size: 11px; min-height: 41px; }
@@ -149,4 +168,5 @@ h2 { font-size: 15px; font-weight: 720; }
   .facts { grid-template-columns: 1fr 1fr; }
   .steps li { flex-wrap: wrap; }
   .step-counts { width: 100%; margin-left: 0; padding-left: 2px; }
+  .log-box { height: 240px; }
 }
